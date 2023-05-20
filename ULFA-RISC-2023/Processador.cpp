@@ -5,6 +5,8 @@
 #include "Memoria.cpp"
 #include "Registradores.cpp"
 #include "Wb.cpp"
+#include "Controle.cpp"
+#include "Conversor.cpp"
 
 class Processador {
 
@@ -16,10 +18,13 @@ class Processador {
         Memoria *memoria;
         Registradores *registrador;
         Wb *wbStage;
+        Controle *controle;
+        Conversor *conversor;
 
     public:
         Processador();
         ~Processador();
+        void executar();
 };
 
 Processador::Processador() {
@@ -31,6 +36,8 @@ Processador::Processador() {
     memoria = new Memoria();
     registrador = new Registradores();
     wbStage = new Wb();
+    controle = new Controle();
+    conversor = new Conversor();
 }
 
 Processador::~Processador() {
@@ -42,4 +49,9 @@ Processador::~Processador() {
     delete memoria;
     delete registrador;
     delete wbStage;
+}
+
+void Processador::executar() {
+
+
 }
