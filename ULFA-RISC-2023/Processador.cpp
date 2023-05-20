@@ -1,3 +1,10 @@
+#define dataBus 32
+#define adressBus 16
+#define cout std::cout
+#define endl std::endl
+
+#include <math.h>
+
 #include "Alu.cpp"
 #include "ExMem.cpp"
 #include "Id.cpp"
@@ -49,6 +56,8 @@ Processador::~Processador() {
     delete memoria;
     delete registrador;
     delete wbStage;
+    delete controle;
+    delete conversor;
 }
 
 void Processador::executar() {
