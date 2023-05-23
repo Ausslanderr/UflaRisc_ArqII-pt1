@@ -1,4 +1,3 @@
-#include <iostream>
 #include "codes/Processador.cpp"
 
 int main() {
