@@ -5,6 +5,13 @@
 
 #define dataBus 32
 #define adressBus 16
+#define numeroTotalEnderecos 64000
+#define tamanhopalavra 4
+#define tamanhoInstrucao 32
+#define comecoMemoriaTexto 256
+#define comecoMemoriaDados 3456
+#define finalMemoriaDados 255999
+#define numRegistradores 32
 
 using namespace std;
 
