@@ -2,6 +2,9 @@
 #include <math.h>
 #include <fstream>
 #include <bitset>
+#include <algorithm>
+#include <vector>
+#include <sstream>
 
 #define dataBus 32
 #define adressBus 16
@@ -68,8 +71,12 @@ void Processador::executar() {
     incrementarClock();
     cout << ifStage->getInstrucao() << endl;
     incrementarClock();
+    cout << ifStage->getInstrucao() << endl;
+    incrementarClock();
+    cout << ifStage->getInstrucao() << endl;
+    incrementarClock();
 
-    cout << qtdClocks << endl;
+    cout << "Número de clocks do programa: " << qtdClocks << endl;
 }
 
 void Processador::incrementarClock() {
