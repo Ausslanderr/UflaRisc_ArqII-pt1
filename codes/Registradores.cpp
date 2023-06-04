@@ -27,7 +27,7 @@ bitset<dataBus> Registradores::getRegistrador(int numeroRegistrador){
 		return vetorReg[numeroRegistrador];
 	}
 
-	throw runtime_error("ERRO LEITURA DO REGISTRADOR - o registrador lido nao pertence ao conjunto de registradores existentes!");
+	throw(6);
 }
 
 void Registradores::setRegistrador(bitset<dataBus> dadoParaEscrever, int numeroRegistrador){
@@ -139,11 +139,11 @@ void Registradores::setRegistrador(bitset<dataBus> dadoParaEscrever, int numeroR
 			break;
 			
 		case 26:
-			throw runtime_error("Tentativa de setar algum valor no registrador reservado ao OS - NEGADO!");
+			throw(7);
 			break;
 			
 		case 27:
-			throw runtime_error("Tentativa de setar algum valor no registrador reservado ao OS - NEGADO!");
+			throw(7);
 			break;
 			
 		case 28:

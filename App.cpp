@@ -36,6 +36,14 @@ int main() {
                 cout << "Acesso indevido na memória!" << endl;
                 break;
 
+            case 6:
+                cout << "O registrador lido nao pertence ao conjunto de registradores existentes!" << endl;
+                break;
+
+            case 7:
+                cout << "Tentativa de setar algum valor no registrador reservado ao OS!" << endl;
+                break;
+
             default:
                 cout << "Erro desconhecido encontrado!" << endl;
                 break;
