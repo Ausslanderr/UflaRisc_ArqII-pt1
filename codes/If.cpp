@@ -24,8 +24,13 @@ If::~If() {
 
 bitset<dataBus> If::getInstrucao(){
 
-    registradorInstrucoes = memoria->getInstrucao(PC);
-    PC++;
+    try {
+        registradorInstrucoes = memoria->getInstrucao(PC);
+        PC++;
+    }
+    catch(int erro) {
+        throw(erro);
+    }
 
     return registradorInstrucoes;
 }
