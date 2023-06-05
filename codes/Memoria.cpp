@@ -21,6 +21,8 @@ Memoria::Memoria() {
 
 Memoria::~Memoria() {
 
+    cout << "memoria morreu" << endl;
+
     delete[] mem;
 }
 

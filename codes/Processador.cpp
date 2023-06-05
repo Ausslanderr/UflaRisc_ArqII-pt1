@@ -8,7 +8,6 @@
 
 #define dataBus 32
 #define adressBus 16
-#define tamanhopalavra 4
 #define numRegistradores 32
 #define lengthRegister 8
 #define c16 16 //const 16
@@ -21,14 +20,13 @@ using namespace std;
 #include "Id.cpp"
 #include "ExMem.cpp"
 #include "Wb.cpp"
-#include "Controle.cpp"
 
 class Processador {
 
     private:
         Conversor *conversor;
         If *ifStage;
-        //Id *idStage;
+        Id *idStage;
         //ExMem *exMemStage;
         //Wb *wbStage;
         int qtdClocks;
@@ -49,7 +47,6 @@ Processador::Processador() {
         throw(erro);
     }
     
-    //idStage = new Id();
     //exMemStage = new ExMem();
     //wbStage = new Wb();
 
@@ -58,9 +55,10 @@ Processador::Processador() {
 
 Processador::~Processador() {
 
+    cout << "processador morreu" << endl;
+
     delete conversor;
     delete ifStage;
-    //delete idStage;
     //delete exMemStage;
     //delete wbStage;
 }
@@ -69,19 +67,42 @@ void Processador::executar() {
 
     try {
         int PC = conversor->getEnderecoComecoMemmoriaTexto();
-
         Memoria *memoria = conversor->getMemoria();
-
         ifStage = new If(memoria, PC);
 
-        cout << ifStage->getInstrucao() << endl;
+        // estágio if inicial
+        bitset<dataBus> instrucaoAtual = ifStage->getInstrucao();
         incrementarClock();
-        cout << ifStage->getInstrucao() << endl;
-        incrementarClock();
-        cout << ifStage->getInstrucao() << endl;
-        incrementarClock();
-        cout << ifStage->getInstrucao() << endl;
-        incrementarClock();
+
+        cout << "Bits da instrução atual: " << instrucaoAtual << endl;
+
+        // Loop principal do processador
+        while(!ifStage->ehInstrucaoFinal()) {
+
+            // estágio id
+            idStage = new Id(instrucaoAtual);
+            incrementarClock();
+
+            /*
+            *   depuração id e controle (não é um estágio, apagar antes de entregar)
+            *   decidi deletar o idStage para que os estágios ex/mem e wb 
+            *   apenas possam fazer get dos atributos dessas classes 
+            */
+            idStage->depuracao();
+            delete idStage;
+
+            // estágio ex/mem
+            // incrementarClock();
+
+            // estágio wb
+            // incrementarClock();
+
+            // estágio if
+            instrucaoAtual = ifStage->getInstrucao();
+            incrementarClock();
+
+            cout << "Bits da instrução atual: " << instrucaoAtual << endl;
+        }
 
         cout << "Número de clocks do programa: " << qtdClocks << endl;
     }

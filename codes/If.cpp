@@ -9,6 +9,7 @@ class If {
         If(Memoria *memoria, int PC);
         ~If();
         bitset<dataBus> getInstrucao();
+        bool ehInstrucaoFinal();
 };
 
 If::If(Memoria *memoria, int PC) {
@@ -19,7 +20,7 @@ If::If(Memoria *memoria, int PC) {
 
 If::~If() {
 
-
+    cout << "If morreu" << endl;
 }
 
 bitset<dataBus> If::getInstrucao(){
@@ -33,4 +34,14 @@ bitset<dataBus> If::getInstrucao(){
     }
 
     return registradorInstrucoes;
+}
+
+bool If::ehInstrucaoFinal() {
+
+    bitset<dataBus> comparacao ("11111111111111111111111111111111");
+
+    if(registradorInstrucoes == comparacao) {
+        return true;
+    }
+    return false;
 }

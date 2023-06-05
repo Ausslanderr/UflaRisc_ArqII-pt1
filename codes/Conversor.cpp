@@ -35,6 +35,8 @@ Conversor::Conversor() {
 
 Conversor::~Conversor() {
 
+    cout << "conversor morreu" << endl;
+
     delete memoria;
 }
 
