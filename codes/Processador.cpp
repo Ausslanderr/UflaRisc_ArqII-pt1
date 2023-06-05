@@ -10,6 +10,9 @@
 #define adressBus 16
 #define tamanhopalavra 4
 #define numRegistradores 32
+#define lengthRegister 8
+#define c16 16 //const 16
+#define c24 24 //const 24
 
 using namespace std;
 
@@ -18,6 +21,7 @@ using namespace std;
 #include "Id.cpp"
 #include "ExMem.cpp"
 #include "Wb.cpp"
+#include "Controle.cpp"
 
 class Processador {
 
