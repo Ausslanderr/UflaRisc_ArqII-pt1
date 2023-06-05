@@ -1,7 +1,7 @@
 class Wb {
 
     private:
-        int teste;
+        Registradores *reg;
 
     public:
         Wb();

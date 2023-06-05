@@ -9,21 +9,6 @@ class Registradores {
     private:
 		bitset<dataBus> vetorReg[numRegistradores];
 
-	/*
-        bitset<tamanhoInstrucao> zero;	// valor constante de zero
-		bitset<tamanhoInstrucao> at;	// reservado pelo compilador
-		bitset<tamanhoInstrucao> v0, v1;	// variaveis para retorno de funcoes e outras utilidades
-		bitset<tamanhoInstrucao> a0, a1, a2, a3;	// argumentos
-		bitset<tamanhoInstrucao> t0, t1, t2, t3, t4, t5, t6, t7;	// variaveis temporarias
-		bitset<tamanhoInstrucao> s0, s1, s2, s3, s4, s5, s6, s7;	// variaveis salvas
-		bitset<tamanhoInstrucao> t8, t9;	// variaveis usadas na adicao dos temporarios
-		bitset<tamanhoInstrucao> k0, k1;	// reservado pelo OS
-		bitset<tamanhoInstrucao> gp;	// global pointer
-		bitset<tamanhoInstrucao> sp;	// stack pointer
-		bitset<tamanhoInstrucao> fp;	// frame pointer
-		bitset<tamanhoInstrucao> ra;	// retorno de função
-		*/
-
     public:
         Registradores();
         bitset<dataBus> Registradores::retornarRegistrador(int numeroRegistrador);
@@ -40,41 +25,6 @@ Registradores::Registradores() {
 bitset<dataBus> Registradores::retornarRegistrador(int numeroRegistrador){
 	
 	return vetorReg[numeroRegistrador];
-	
-	/*
-	if(numeroRegistrador == 0) return vetorReg[0]; //zero
-	if(numeroRegistrador == 1) return vetorReg[1]; //at
-	if(numeroRegistrador == 2) return vetorReg[2]; //v0
-	if(numeroRegistrador == 3) return vetorReg[3]; //v1
-	if(numeroRegistrador == 4) return vetorReg[4]; //a0
-	if(numeroRegistrador == 5) return vetorReg[5]; //a1;
-	if(numeroRegistrador == 6) return vetorReg[6]; //a2;
-	if(numeroRegistrador == 7) return vetorReg[7]; //a3;
-	if(numeroRegistrador == 8) return vetorReg[8]; //t0;
-	if(numeroRegistrador == 9) return vetorReg[9]; //t1;
-	if(numeroRegistrador == 10) return vetorReg[10]; //t2;
-	if(numeroRegistrador == 11) return vetorReg[11]; //t3;
-	if(numeroRegistrador == 12) return vetorReg[12]; //t4;
-	if(numeroRegistrador == 13) return vetorReg[13]; //t5;		//Guarda depois
-	if(numeroRegistrador == 14) return vetorReg[14]; //t6;
-	if(numeroRegistrador == 15) return vetorReg[15]; //t7;
-	if(numeroRegistrador == 16) return vetorReg[16]; //s0;
-	if(numeroRegistrador == 17) return vetorReg[17]; //s1;
-	if(numeroRegistrador == 18) return vetorReg[18]; //s2;
-	if(numeroRegistrador == 19) return vetorReg[19]; //s3;
-	if(numeroRegistrador == 20) return vetorReg[20]; //s4;
-	if(numeroRegistrador == 21) return vetorReg[21]; //s5;
-	if(numeroRegistrador == 22) return vetorReg[22]; //s6;
-	if(numeroRegistrador == 23) return vetorReg[23]; //s7;
-	if(numeroRegistrador == 24) return vetorReg[24]; //t8;
-	if(numeroRegistrador == 25) return vetorReg[25]; //t9;
-	if(numeroRegistrador == 26) return vetorReg[26]; //k0;
-	if(numeroRegistrador == 27) return vetorReg[27]; //k1;
-	if(numeroRegistrador == 28) return vetorReg[28]; //gp;
-	if(numeroRegistrador == 29) return vetorReg[29]; //sp;
-	if(numeroRegistrador == 30) return vetorReg[30]; //fp;
-	if(numeroRegistrador == 31) return vetorReg[31]; //ra;
-	*/
 	
 	throw runtime_error("ERRO LEITURA DO REGISTRADOR - o registrador lido nao pertence ao conjunto de registradores existentes!");
 }
