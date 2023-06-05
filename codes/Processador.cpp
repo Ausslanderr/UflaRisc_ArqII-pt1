@@ -42,7 +42,13 @@ class Processador {
 
 Processador::Processador() {
 
-    conversor = new Conversor();
+    try{
+        conversor = new Conversor();
+    }
+    catch(int erro) {
+        throw(erro);
+    }
+    
     //idStage = new Id();
     //exMemStage = new ExMem();
     //wbStage = new Wb();
@@ -61,21 +67,27 @@ Processador::~Processador() {
 
 void Processador::executar() {
 
-    int PC = conversor->getEnderecoComecoMemmoriaTexto();
-    Memoria *memoria = conversor->getMemoria();
+    try {
+        int PC = conversor->getEnderecoComecoMemmoriaTexto();
 
-    ifStage = new If(memoria, PC);
+        Memoria *memoria = conversor->getMemoria();
 
-    cout << ifStage->getInstrucao() << endl;
-    incrementarClock();
-    cout << ifStage->getInstrucao() << endl;
-    incrementarClock();
-    cout << ifStage->getInstrucao() << endl;
-    incrementarClock();
-    cout << ifStage->getInstrucao() << endl;
-    incrementarClock();
+        ifStage = new If(memoria, PC);
 
-    cout << "Número de clocks do programa: " << qtdClocks << endl;
+        cout << ifStage->getInstrucao() << endl;
+        incrementarClock();
+        cout << ifStage->getInstrucao() << endl;
+        incrementarClock();
+        cout << ifStage->getInstrucao() << endl;
+        incrementarClock();
+        cout << ifStage->getInstrucao() << endl;
+        incrementarClock();
+
+        cout << "Número de clocks do programa: " << qtdClocks << endl;
+    }
+    catch(int erro) {
+        throw(erro);
+    }
 }
 
 void Processador::incrementarClock() {

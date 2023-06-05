@@ -42,7 +42,7 @@ bitset<dataBus> Memoria::getInstrucao(int posicao) {
 
     if(posicao < 0 or posicao >= tamanhoMemoria) {
 
-        // FAZER ERRO
+        throw(5);
     }
 
     return mem[posicao];
