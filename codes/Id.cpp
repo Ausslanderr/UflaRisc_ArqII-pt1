@@ -13,12 +13,14 @@ class Id {
         Id();
         ~Id();
         void decodificarInstrucao (If *Aux);
-        void alter_Sinais(string opcode);
+        //void alter_Sinais(string opcode);
         void reset_valores ();
-        void depuracao_controle();
+        void enviarOpcode(string auxOpcode);
+        // Metodo de depuração está no Controle.
 };
 
 Id::Id() {
+    
         sinaisControle.valuesReset();
         bitset<8> opcode = 0;
         bitset<lengthRegister> ra = 0; //bitset
@@ -38,17 +40,20 @@ void Id::reset_valores (){
     rb = -1;
     rc = -1;
 }
+void Id::enviarOpcode(string auxOpcode){
+    sinaisControle.alterarSinais(auxOpcode);
+}
 void Id::decodificarInstrucao (If *Aux){
     // reorganizar tudo aqui
     
     bitset<dataBus> instrucaoBinaria = Aux->getInstrucao(); //instrucao 32 bits
     string instrucaoString = instrucaoBinaria.to_string(); //instrucao 32 bits em string
-
     string texto_Binario_Auxiliar;
 
     string auxOpcode = instrucaoString.substr(0, 8); //opcode string pra ser comparado na classe Controle
-    sinaisControle.alterarSinais(auxOpcode);// enviando os sinais de controle para a classe configura-los
+    enviarOpcode(auxOpcode); // enviando os sinais de controle para a classe configura-los
 
+    
     texto_Binario_Auxiliar = instrucaoString.substr(7, lengthRegister);//extrai os 8 bits do primeiro operando
 	bitset<8> aux_rs (texto_Binario_Auxiliar);
 	ra = aux_rs.to_ulong();
