@@ -8,13 +8,11 @@
 
 #define dataBus 32
 #define adressBus 16
-#define numeroTotalEnderecos 64000
 #define tamanhopalavra 4
-#define tamanhoInstrucao 32
-#define comecoMemoriaTexto 256
-#define comecoMemoriaDados 3456
-#define finalMemoriaDados 255999
 #define numRegistradores 32
+#define lengthRegister 8
+#define c16 16 //const 16
+#define c24 24 //const 24
 
 using namespace std;
 
@@ -23,6 +21,7 @@ using namespace std;
 #include "Id.cpp"
 #include "ExMem.cpp"
 #include "Wb.cpp"
+#include "Controle.cpp"
 
 class Processador {
 
@@ -43,7 +42,13 @@ class Processador {
 
 Processador::Processador() {
 
-    conversor = new Conversor();
+    try{
+        conversor = new Conversor();
+    }
+    catch(int erro) {
+        throw(erro);
+    }
+    
     //idStage = new Id();
     //exMemStage = new ExMem();
     //wbStage = new Wb();
@@ -62,21 +67,27 @@ Processador::~Processador() {
 
 void Processador::executar() {
 
-    int PC = conversor->getEnderecoComecoMemmoriaTexto();
-    Memoria *memoria = conversor->getMemoria();
+    try {
+        int PC = conversor->getEnderecoComecoMemmoriaTexto();
 
-    ifStage = new If(memoria, PC);
+        Memoria *memoria = conversor->getMemoria();
 
-    cout << ifStage->getInstrucao() << endl;
-    incrementarClock();
-    cout << ifStage->getInstrucao() << endl;
-    incrementarClock();
-    cout << ifStage->getInstrucao() << endl;
-    incrementarClock();
-    cout << ifStage->getInstrucao() << endl;
-    incrementarClock();
+        ifStage = new If(memoria, PC);
 
-    cout << "Número de clocks do programa: " << qtdClocks << endl;
+        cout << ifStage->getInstrucao() << endl;
+        incrementarClock();
+        cout << ifStage->getInstrucao() << endl;
+        incrementarClock();
+        cout << ifStage->getInstrucao() << endl;
+        incrementarClock();
+        cout << ifStage->getInstrucao() << endl;
+        incrementarClock();
+
+        cout << "Número de clocks do programa: " << qtdClocks << endl;
+    }
+    catch(int erro) {
+        throw(erro);
+    }
 }
 
 void Processador::incrementarClock() {

@@ -1,3 +1,5 @@
+#include "Registradores.cpp"
+
 class Wb {
 
     private:

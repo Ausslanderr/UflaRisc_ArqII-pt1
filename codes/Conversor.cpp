@@ -25,8 +25,12 @@ Conversor::Conversor() {
 
     enderecoComecoMemoriaTexto = 0;
     memoria = new Memoria();
-
-    leituraArquivoEntrada();
+    try{
+        leituraArquivoEntrada();
+    }
+    catch(int erro) {
+        throw(erro);
+    }
 }
 
 Conversor::~Conversor() {
@@ -48,32 +52,38 @@ void Conversor::leituraArquivoEntrada() {
         string instrucaoAtual;
         int enderecoMemoriaTexto = enderecoComecoMemoriaTexto;
         vector<string> *instrucaoAtualSeparada = NULL;
+        bool primeiro = false;
 
         do {
 
             // leitura uma linha/instrucao
 		    getline(arquivo_entrada, instrucaoAtual);
 
-            // retorna a linha de instrucao particionada em um vector
-            vector<string> *instrucaoAtualSeparada = separarString(instrucaoAtual, " ");
-
-            if(instrucaoAtualSeparada->at(0) == "" or instrucaoAtualSeparada->at(0) == " ") {
+            if(instrucaoAtual == "" or instrucaoAtual == " ") {
 
                 continue;
             }
+
+            // retorna a linha de instrucao particionada em um vector
+            vector<string> *instrucaoAtualSeparada = separarString(instrucaoAtual, " ");
             
             // a primeira instrucao deve ser obrigatoriamente um address
-            if(instrucaoAtualSeparada->at(0) == "address") {
+            if(instrucaoAtualSeparada->at(0) == "address" and !primeiro) {
 
-                // FAZER ERRO se aux = false
+                primeiro = true;
+
                 bool aux = verificarIntAddress(instrucaoAtualSeparada->at(1));
+
+                if(!aux) {
+                    throw(2);
+                }
 
                 enderecoMemoriaTexto = enderecoComecoMemoriaTexto;
             }
 
-            else {
+            else if(!primeiro) {
 
-                // FAZER ERRO
+                throw(3);
             }
 
             instrucaoAtual = retornarInstrucaoEmString(instrucaoAtualSeparada);
@@ -90,7 +100,7 @@ void Conversor::leituraArquivoEntrada() {
 
     else {
 
-        // FAZER ERRO
+        throw(1);
     }
 }
 
@@ -100,10 +110,7 @@ bool Conversor::verificarIntAddress(string str) {
     
     if(aux >= pow(2, adressBus) or aux < 0) {
         
-        // FAZER ERRO
-        
         return false;
-        
     }
     
     else {
@@ -210,7 +217,9 @@ string Conversor::retornarInstrucaoEmString(vector<string> *vect) {
     else if(vect->at(0) == "nand")      { return (conversorIntParaBinario8(29) + conversorIntParaBinario8(stoi(vect->at(2))) + conversorIntParaBinario8(stoi(vect->at(3))) + conversorIntParaBinario8(stoi(vect->at(1))));} // nand rc, ra, rb
     else if(vect->at(0) == "nor")       { return (conversorIntParaBinario8(30) + conversorIntParaBinario8(stoi(vect->at(2))) + conversorIntParaBinario8(stoi(vect->at(3))) + conversorIntParaBinario8(stoi(vect->at(1))));} // nor rc, ra, rb
 
-    return "00000000000000000000000000000000";
+    else{
+        throw(4);
+    }
 }
 
 // converte o numero inteiro para binario (8 casas)
