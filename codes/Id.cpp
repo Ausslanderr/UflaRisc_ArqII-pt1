@@ -9,13 +9,13 @@ class Id {
 	    bitset<lengthRegister> rc;
         bitset<c16> const16; //16
 	    bitset<c24> const24; //24
-        Controle *sinaisControle;
         void reset_valores();
         void decodificarInstrucao(bitset<dataBus> instrucaoBinaria);
 
     public:
         Id(bitset<dataBus> instrucaoBinaria);
         ~Id();
+        Controle *sinaisControle;
         bitset<8> getOpcode()           {return opcode;};
         bitset<lengthRegister> getRa()  {return ra;};
         bitset<lengthRegister> getRb()  {return rb;};

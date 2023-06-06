@@ -27,7 +27,7 @@ class Processador {
         Conversor *conversor;
         If *ifStage;
         Id *idStage;
-        //ExMem *exMemStage;
+        ExMem *exMemStage;
         //Wb *wbStage;
         int qtdClocks;
         void incrementarClock();
@@ -91,8 +91,8 @@ void Processador::executar() {
             idStage->depuracao();
             delete idStage;
 
-            // estágio ex/mem
-            // incrementarClock();
+            exMemStage = new ExMem(idStage, ifStage);
+            incrementarClock();
 
             // estágio wb
             // incrementarClock();
