@@ -1,11 +1,3 @@
-#include <iostream>
-#include <bitset>
-#include "Registradores.cpp"
-#include "If.cpp"
-#include "Controle.cpp"
-
-using namespace std;
-
 class Alu {
 
     private:
@@ -37,8 +29,10 @@ class Alu {
 
 Alu::Alu(Id *idStage, If *ifStage) {
 
-	controle = idStage->sinaisControle; // Tem o mesmo problema aqui e no codigo do Davi. Os tipos são compativeis, mas de alguma forma ele nao permite igualar a posicao de memoria
+	//controle = idStage->sinaisControle; // Tem o mesmo problema aqui e no codigo do Davi. Os tipos são compativeis, mas de alguma forma ele nao permite igualar a posicao de memoria
 	this->ifStage = ifStage;
+
+	cout << idStage->getControle()->getAluctrl() << endl;
 
     PC = ifStage->getInstrucao();
     Const16 = idStage->getConst16(); 

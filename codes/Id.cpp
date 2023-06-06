@@ -3,10 +3,14 @@
 class Id {
 
     private:
+        Controle *sinaisControle;
         bitset<8> opcode;
         bitset<lengthRegister> ra; //bitset
+        bitset<dataBus> raValue;
 	    bitset<lengthRegister> rb;
+        bitset<dataBus> rbValue;
 	    bitset<lengthRegister> rc;
+        bitset<dataBus> rcValue;
         bitset<c16> const16; //16
 	    bitset<c24> const24; //24
         void reset_valores();
@@ -15,13 +19,13 @@ class Id {
     public:
         Id(bitset<dataBus> instrucaoBinaria);
         ~Id();
-        Controle *sinaisControle;
         bitset<8> getOpcode()           {return opcode;};
         bitset<lengthRegister> getRa()  {return ra;};
         bitset<lengthRegister> getRb()  {return rb;};
         bitset<lengthRegister> getRc()  {return rc;};
         bitset<c16> getConst16()        {return const16;};
         bitset<c24> getConst24()        {return const24;};
+        Controle* getControle()          {return sinaisControle;};
         //void alter_Sinais(string opcode);
         // Metodo de depuração está no Controle.
         void depuracao();
@@ -44,8 +48,11 @@ void Id::reset_valores() {
 
     opcode.reset();
     ra = -1; //bitset
+    raValue.reset();
 	rb = -1;
+    rbValue.reset();
 	rc = -1;
+    rcValue.reset();
     const16.reset(); //16
 	const24.reset(); //24
 }

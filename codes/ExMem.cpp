@@ -14,8 +14,10 @@ class ExMem{
 
 ExMem::ExMem(Id *idStage, If *ifStage) {
 
-	controle = idStage->sinaisControle; // Tem o mesmo problema aqui e no codigo do Davi. Os tipos são compativeis, mas de alguma forma ele nao permite igualar a posicao de memoria
+	//controle = idStage->sinaisControle; // Tem o mesmo problema aqui e no codigo do Davi. Os tipos são compativeis, mas de alguma forma ele nao permite igualar a posicao de memoria
 	alu = new Alu(idStage, ifStage);
+
+	cout << idStage->getControle()->getAluctrl() << endl;
 
 }
 
