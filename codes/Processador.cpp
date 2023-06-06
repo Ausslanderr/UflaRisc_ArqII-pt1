@@ -16,6 +16,7 @@
 using namespace std;
 
 #include "Conversor.cpp"
+#include "Registradores.cpp"
 #include "If.cpp"
 #include "Id.cpp"
 #include "ExMem.cpp"
@@ -25,6 +26,7 @@ class Processador {
 
     private:
         Conversor *conversor;
+        Registradores *regs;
         If *ifStage;
         Id *idStage;
         ExMem *exMemStage;
@@ -42,6 +44,7 @@ Processador::Processador() {
 
     try{
         conversor = new Conversor();
+        regs = new Registradores();
     }
     catch(int erro) {
         throw(erro);
@@ -58,6 +61,7 @@ Processador::~Processador() {
     cout << "processador morreu" << endl;
 
     delete conversor;
+    delete regs;
     delete ifStage;
     //delete exMemStage;
     //delete wbStage;
@@ -91,6 +95,7 @@ void Processador::executar() {
             idStage->depuracao();
             delete idStage;
 
+            // estágio ex/mem
             exMemStage = new ExMem(idStage, ifStage);
             incrementarClock();
 

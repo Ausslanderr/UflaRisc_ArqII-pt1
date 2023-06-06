@@ -48,6 +48,10 @@ int main() {
                 cout << "Tentativa de setar algum valor no registrador reservado ao OS!" << endl;
                 break;
 
+            case 9:
+                cout << "Tentativa de escrever em um registrador inexistente!" << endl;
+                break;
+
             default:
                 cout << "Erro desconhecido encontrado!" << endl;
                 break;
