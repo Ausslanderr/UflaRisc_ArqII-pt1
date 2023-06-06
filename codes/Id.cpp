@@ -4,6 +4,7 @@ class Id {
 
     private:
         Controle *sinaisControle;
+        Registradores *regs;
         bitset<8> opcode;
         bitset<lengthRegister> ra; //bitset
         bitset<dataBus> raValue;
@@ -17,23 +18,27 @@ class Id {
         void decodificarInstrucao(bitset<dataBus> instrucaoBinaria);
 
     public:
-        Id(bitset<dataBus> instrucaoBinaria);
+        Id(bitset<dataBus> instrucaoBinaria, Registradores *regs);
         ~Id();
         bitset<8> getOpcode()           {return opcode;};
         bitset<lengthRegister> getRa()  {return ra;};
+        bitset<dataBus> getRaValue()    {return raValue;};
         bitset<lengthRegister> getRb()  {return rb;};
+        bitset<dataBus> getRbValue()    {return rbValue;};
         bitset<lengthRegister> getRc()  {return rc;};
+        bitset<dataBus> getRcValue()    {return rcValue;};
         bitset<c16> getConst16()        {return const16;};
         bitset<c24> getConst24()        {return const24;};
-        Controle* getControle()          {return sinaisControle;};
+        Controle* getControle()         {return sinaisControle;};
         //void alter_Sinais(string opcode);
         // Metodo de depuração está no Controle.
         void depuracao();
 };
 
-Id::Id(bitset<dataBus> instrucaoBinaria) {
+Id::Id(bitset<dataBus> instrucaoBinaria, Registradores *regs) {
 
     reset_valores();
+    this->regs = regs;
     decodificarInstrucao(instrucaoBinaria);
 }
 
@@ -69,12 +74,15 @@ void Id::decodificarInstrucao(bitset<dataBus> instrucaoBinaria) {
     
     texto_Binario_Auxiliar = instrucaoString.substr(8, lengthRegister);//extrai os 8 bits do primeiro operando
 	ra = bitset<lengthRegister> (texto_Binario_Auxiliar);
+    raValue = regs->getRegistrador(ra);
 	
 	texto_Binario_Auxiliar = instrucaoString.substr(16, lengthRegister);//extrai os 8 bits do segundo operando
 	rb = bitset<lengthRegister> (texto_Binario_Auxiliar);
+    rbValue = regs->getRegistrador(rb);
 	
 	texto_Binario_Auxiliar = instrucaoString.substr(24, lengthRegister);//extrai os 8 bits do terceiro operando
 	rc = bitset<lengthRegister> (texto_Binario_Auxiliar);
+    rcValue = regs->getRegistrador(rc);
 
     texto_Binario_Auxiliar = instrucaoString.substr(8, c16);
     const16 = bitset<c16> (texto_Binario_Auxiliar);

@@ -5,7 +5,6 @@ class Conversor {
     private:
         int enderecoComecoMemoriaTexto;
         Memoria *memoria;
-
         void leituraArquivoEntrada();
         bool verificarIntAddress(string str);
         vector<string>* separarString(string str, string delimiter);
@@ -110,7 +109,7 @@ bool Conversor::verificarIntAddress(string str) {
 
     int aux = stoi(str);
     
-    if(aux >= pow(2, adressBus) or aux < 0) {
+    if(aux >= pow(2, addressBus) or aux < 0) {
         
         return false;
     }

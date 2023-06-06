@@ -7,7 +7,8 @@
 #include <sstream>
 
 #define dataBus 32
-#define adressBus 16
+#define addressBus 16
+#define tamanhoMemoria 65536
 #define numRegistradores 32
 #define lengthRegister 8
 #define c16 16 //const 16
@@ -70,7 +71,7 @@ Processador::~Processador() {
 void Processador::executar() {
 
     try {
-        int PC = conversor->getEnderecoComecoMemmoriaTexto();
+        bitset<addressBus> PC (conversor->getEnderecoComecoMemmoriaTexto());
         Memoria *memoria = conversor->getMemoria();
         ifStage = new If(memoria, PC);
 
@@ -84,7 +85,7 @@ void Processador::executar() {
         while(!ifStage->ehInstrucaoFinal()) {
 
             // estágio id
-            idStage = new Id(instrucaoAtual);
+            idStage = new Id(instrucaoAtual, regs);
             incrementarClock();
 
             /*
@@ -96,7 +97,7 @@ void Processador::executar() {
             delete idStage;
 
             // estágio ex/mem
-            exMemStage = new ExMem(idStage, ifStage);
+            exMemStage = new ExMem(idStage);
             incrementarClock();
 
             // estágio wb

@@ -3,35 +3,33 @@
 class ExMem{
 	
 	private:
-	
 		Alu *alu;
-		Controle *controle;
+		Id *idStage;
+		Controle *sinaisControle;
 		
 	public:
-		ExMem(Id *idStage, If *ifStage);
+		ExMem(Id *idStage, Controle *sinaisControle);
 		void realizarOperacoes();
 };
 
-ExMem::ExMem(Id *idStage, If *ifStage) {
+ExMem::ExMem(Id *idStage, Controle *sinaisControle) {
 
-	//controle = idStage->sinaisControle; // Tem o mesmo problema aqui e no codigo do Davi. Os tipos são compativeis, mas de alguma forma ele nao permite igualar a posicao de memoria
-	alu = new Alu(idStage, ifStage);
-
-	cout << idStage->getControle()->getAluctrl() << endl;
-
+	this->idStage = idStage;
+	this->sinaisControle = sinaisControle;
+	alu = new Alu(idStage, sinaisControle);
 }
 
 void ExMem::realizarOperacoes(){
 	
 	// Realiza os calculos aritmeticos
-	if((controle->getBranch() == 0) && (controle->getJump() == 0) && (controle->getMemwrite() == 0) && (controle->getMemread() == 0))
+	if((sinaisControle->getBranch() == 0) && (sinaisControle->getJump() == 0) && (sinaisControle->getMemwrite() == 0) && (sinaisControle->getMemread() == 0))
 		alu->instrucoesAritmeticas();
 		
 	// Realiza os calculos dos desvios
-	else if((controle->getBranch() == 1) || (controle->getJump() == 1))
+	else if((sinaisControle->getBranch() == 1) || (sinaisControle->getJump() == 1))
 		alu->instrucoesDeDesvio();
 		
 	// Realiza os calculos para armazenar valores na memoria
-	else if((controle->getBranch() == 0) && (controle->getJump() == 0) && ((controle->getMemwrite() == 1) || (controle->getMemread() == 1)))
+	else if((sinaisControle->getBranch() == 0) && (sinaisControle->getJump() == 0) && ((sinaisControle->getMemwrite() == 1) || (sinaisControle->getMemread() == 1)))
 		alu->instrucoesDeMemoria();
 }
