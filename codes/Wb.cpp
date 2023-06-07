@@ -20,6 +20,7 @@ Wb::Wb(Registradores *regPointer, Controle *controlePointer, ExMem *estagioExMem
 	estagioExMem = estagioExMemPointer;
     alu = aluPointer;
 	id = idPointer;
+	
 }
 
 void Wb::leituraEscritaRegistrador(){
