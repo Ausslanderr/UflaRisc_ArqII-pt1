@@ -20,8 +20,6 @@ class Alu {
         void instrucoesDeDesvio();
         void instrucoesDeMemoria();
         void mostrarFlags();
-		bool getOverflow(){return overflow;};
-		bitset<dataBus> getResultado(){return resultado;};
 		//void resetFlagsDesvio(); Isso vai ser necessario, mesmo possuindo o construtor?
         
 };
