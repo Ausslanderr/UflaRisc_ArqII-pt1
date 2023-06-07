@@ -22,6 +22,7 @@ using namespace std;
 #include "ExMem.cpp"
 #include "Wb.cpp"
 #include "Controle.cpp"
+#include "Registradores.cpp"
 
 class Processador {
 
