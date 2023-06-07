@@ -2,24 +2,23 @@ class Memoria {
 
     private:
         bitset<dataBus> *mem;
-        int tamanhoMemoria;
 
     public:
         Memoria();
         ~Memoria();
         void armazenarInstrucao(string instrucaoAtual, int enderecoMemoriaTexto);
         void armazenarDado(string dado, int enderecoMemoriaDado);
-        bitset<dataBus> getInstrucao(int posicao);
+        bitset<dataBus> getInstrucao(bitset<addressBus> posicao);
 };
 
 Memoria::Memoria() {
-
-    tamanhoMemoria = pow(2, adressBus);
 
     mem = new bitset<dataBus>[tamanhoMemoria];
 }
 
 Memoria::~Memoria() {
+
+    cout << "memoria morreu" << endl;
 
     delete[] mem;
 }
@@ -38,12 +37,14 @@ void Memoria::armazenarDado(string dado, int enderecoMemoriaDado) {
     mem[enderecoMemoriaDado] = dadoBitSet;
 }
 
-bitset<dataBus> Memoria::getInstrucao(int posicao) {
+bitset<dataBus> Memoria::getInstrucao(bitset<addressBus> posicao) {
 
-    if(posicao < 0 or posicao >= tamanhoMemoria) {
+    int aux = (int)posicao.to_ulong();
+
+    if(aux < 0 or aux >= tamanhoMemoria) {
 
         throw(5);
     }
 
-    return mem[posicao];
+    return mem[aux];
 }

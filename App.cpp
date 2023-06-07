@@ -37,11 +37,19 @@ int main() {
                 break;
 
             case 6:
-                cout << "O registrador lido nao pertence ao conjunto de registradores existentes!" << endl;
+                cout << "O registrador lido não pertence ao conjunto de registradores existentes!" << endl;
                 break;
 
             case 7:
+                cout << "Tentativa de setar algum valor no registrador zero!" << endl;
+                break;
+
+            case 8:
                 cout << "Tentativa de setar algum valor no registrador reservado ao OS!" << endl;
+                break;
+
+            case 9:
+                cout << "Tentativa de escrever em um registrador inexistente!" << endl;
                 break;
 
             default:
