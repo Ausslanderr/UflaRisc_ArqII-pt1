@@ -10,6 +10,8 @@ class If {
         If(Memoria *memoria, bitset<addressBus> PC);
         ~If();
         bitset<dataBus> getInstrucao();
+        bitset<16> getPc();
+        void desviaPc(bitset<16> PC);
         bool ehInstrucaoFinal();
 };
 
@@ -62,4 +64,12 @@ bool If::ehInstrucaoFinal() {
         return true;
     }
     return false;
+}
+
+bitset<16> If::getPc(){
+    return PC;
+} 
+
+void If::desviaPc(bitset<16> PC){
+    this->PC = PC;
 }

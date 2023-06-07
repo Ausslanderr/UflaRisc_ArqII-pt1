@@ -5,18 +5,20 @@ class ExMem{
 	private:
 		Alu *alu;
 		Id *idStage;
+		If *ifStage;
+		Registradores *reg;
 		Controle *sinaisControle;
 		
 	public:
-		ExMem(Id *idStage, Controle *sinaisControle);
+		ExMem(Id *idStage, Controle *sinaisControle, If *ifStage, Registradores *reg);
 		void realizarOperacoes();
 };
 
-ExMem::ExMem(Id *idStage, Controle *sinaisControle) {
+ExMem::ExMem(Id *idStage, Controle *sinaisControle, If *ifStage, Registradores *reg) {
 
 	this->idStage = idStage;
 	this->sinaisControle = sinaisControle;
-	alu = new Alu(idStage, sinaisControle);
+	alu = new Alu(idStage, sinaisControle, ifStage, reg);
 }
 
 void ExMem::realizarOperacoes(){
