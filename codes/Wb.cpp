@@ -9,7 +9,7 @@ class Wb{
 
 		
 	public:
-		Wb(Registradores *regPointer, Controle *controlePointer, ExMem *estagioExMemPointer, Alu *alu, Id *id);
+		Wb(Registradores *regPointer, Controle *controlePointer, ExMem *estagioExMemPointer, Alu *aluPointer, Id *idPointer);
 		void leituraEscritaRegistrador();
 };
 
