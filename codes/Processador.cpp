@@ -7,7 +7,8 @@
 #include <sstream>
 
 #define dataBus 32
-#define adressBus 16
+#define addressBus 16
+#define tamanhoMemoria 65536
 #define numRegistradores 32
 #define lengthRegister 8
 #define c16 16 //const 16
@@ -16,20 +17,20 @@
 using namespace std;
 
 #include "Conversor.cpp"
+#include "Registradores.cpp"
 #include "If.cpp"
 #include "Id.cpp"
 #include "ExMem.cpp"
 #include "Wb.cpp"
-#include "Controle.cpp"
-#include "Registradores.cpp"
 
 class Processador {
 
     private:
         Conversor *conversor;
+        Registradores *regs;
         If *ifStage;
-        //Id *idStage;
-        //ExMem *exMemStage;
+        Id *idStage;
+        ExMem *exMemStage;
         //Wb *wbStage;
         int qtdClocks;
         void incrementarClock();
@@ -44,12 +45,12 @@ Processador::Processador() {
 
     try{
         conversor = new Conversor();
+        regs = new Registradores();
     }
     catch(int erro) {
         throw(erro);
     }
     
-    //idStage = new Id();
     //exMemStage = new ExMem();
     //wbStage = new Wb();
 
@@ -58,9 +59,11 @@ Processador::Processador() {
 
 Processador::~Processador() {
 
+    cout << "processador morreu" << endl;
+
     delete conversor;
+    delete regs;
     delete ifStage;
-    //delete idStage;
     //delete exMemStage;
     //delete wbStage;
 }
@@ -68,18 +71,12 @@ Processador::~Processador() {
 void Processador::executar() {
 
     try {
-        int PC = conversor->getEnderecoComecoMemmoriaTexto();
+        bitset<addressBus> PC (conversor->getEnderecoComecoMemmoriaTexto());
         Memoria *memoria = conversor->getMemoria();
-
         ifStage = new If(memoria, PC);
 
-        cout << ifStage->getInstrucao() << endl;
-        incrementarClock();
-        cout << ifStage->getInstrucao() << endl;
-        incrementarClock();
-        cout << ifStage->getInstrucao() << endl;
-        incrementarClock();
-        cout << ifStage->getInstrucao() << endl;
+        // estágio if inicial
+        bitset<dataBus> instrucaoAtual = ifStage->getInstrucao();
         incrementarClock();
 
         cout << "Bits da instrução atual: " << instrucaoAtual << endl;
@@ -88,7 +85,7 @@ void Processador::executar() {
         while(!ifStage->ehInstrucaoFinal()) {
 
             // estágio id
-            idStage = new Id(instrucaoAtual);
+            idStage = new Id(instrucaoAtual, regs);
             incrementarClock();
 
             /*
@@ -100,7 +97,7 @@ void Processador::executar() {
             delete idStage;
 
             // estágio ex/mem
-            exMemStage = new ExMem(idStage, ifStage);
+            exMemStage = new ExMem(idStage);
             incrementarClock();
 
             // estágio wb
