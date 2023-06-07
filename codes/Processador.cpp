@@ -8,7 +8,6 @@
 
 #define dataBus 32
 #define adressBus 16
-#define tamanhopalavra 4
 #define numRegistradores 32
 #define lengthRegister 8
 #define c16 16 //const 16
@@ -70,7 +69,6 @@ void Processador::executar() {
 
     try {
         int PC = conversor->getEnderecoComecoMemmoriaTexto();
-
         Memoria *memoria = conversor->getMemoria();
 
         ifStage = new If(memoria, PC);
@@ -83,6 +81,37 @@ void Processador::executar() {
         incrementarClock();
         cout << ifStage->getInstrucao() << endl;
         incrementarClock();
+
+        cout << "Bits da instrução atual: " << instrucaoAtual << endl;
+
+        // Loop principal do processador
+        while(!ifStage->ehInstrucaoFinal()) {
+
+            // estágio id
+            idStage = new Id(instrucaoAtual);
+            incrementarClock();
+
+            /*
+            *   depuração id e controle (não é um estágio, apagar antes de entregar)
+            *   decidi deletar o idStage para que os estágios ex/mem e wb 
+            *   apenas possam fazer get dos atributos dessas classes 
+            */
+            idStage->depuracao();
+            delete idStage;
+
+            // estágio ex/mem
+            exMemStage = new ExMem(idStage, ifStage);
+            incrementarClock();
+
+            // estágio wb
+            // incrementarClock();
+
+            // estágio if
+            instrucaoAtual = ifStage->getInstrucao();
+            incrementarClock();
+
+            cout << "Bits da instrução atual: " << instrucaoAtual << endl;
+        }
 
         cout << "Número de clocks do programa: " << qtdClocks << endl;
     }

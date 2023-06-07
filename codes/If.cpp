@@ -34,3 +34,13 @@ bitset<dataBus> If::getInstrucao(){
 
     return registradorInstrucoes;
 }
+
+bool If::ehInstrucaoFinal() {
+
+    bitset<dataBus> comparacao ("11111111111111111111111111111111");
+
+    if(registradorInstrucoes == comparacao) {
+        return true;
+    }
+    return false;
+}
