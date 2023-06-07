@@ -2,7 +2,7 @@
 
 using namespace std;
 
-class Alu {
+class Alu { 
 
     private:
         bitset<dataBus> rc, ra, rb, zero;
@@ -47,8 +47,8 @@ Alu::Alu(Id *idStage, Controle *sinaisControle, If *ifStage, Registradores *reg)
 	r31 = reg->getRegistrador(31);
 	Const16 = idStage->getConst16();
 	
-    //address = ??
-    //end = ??
+    //address = ???
+    //end = ???
 
     ALUzero = 0;
     zero = 0;
