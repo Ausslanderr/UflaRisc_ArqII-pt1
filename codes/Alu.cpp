@@ -29,6 +29,7 @@ class Alu {
 		void threadsDeImpressao(bitset<dataBus> ra, int i);
 		bool getOverflow(){return overflow;};
 		bitset<dataBus> getResultado(){return rc;};
+		bitset<addressBus> getRetornoFuncao(){return r31;};
 		//void resetFlagsDesvio(); Isso vai ser necessario, mesmo possuindo o construtor?
         
 };

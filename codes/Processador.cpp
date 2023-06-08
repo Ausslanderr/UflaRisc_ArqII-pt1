@@ -31,7 +31,7 @@ class Processador {
         If *ifStage;
         Id *idStage;
         ExMem *exMemStage;
-        //Wb *wbStage;
+        Wb *wbStage;
         int qtdClocks;
         void incrementarClock();
 
@@ -65,7 +65,7 @@ Processador::~Processador() {
     delete regs;
     delete ifStage;
     //delete exMemStage;
-    //delete wbStage;
+    delete wbStage;
 }
 
 void Processador::executar() {
@@ -101,7 +101,8 @@ void Processador::executar() {
             incrementarClock();
 
             // estágio wb
-            // incrementarClock();
+            wbStage = new Wb(regs, ???, exMemStage, ???, idStage);
+            incrementarClock();
 
             // estágio if
             instrucaoAtual = ifStage->getInstrucao();
