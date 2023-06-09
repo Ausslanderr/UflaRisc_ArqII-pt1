@@ -11,6 +11,7 @@
 #define tamanhoMemoria 65536
 #define numRegistradores 32
 #define lengthRegister 8
+#define c8 8 //const 8
 #define c16 16 //const 16
 #define c24 24 //const 24
 
