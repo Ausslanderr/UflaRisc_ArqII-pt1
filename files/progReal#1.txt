@@ -1,0 +1,6 @@
+#instruções que fazem sentido, p/ averiguar funcionamento
+address 1024
+add R3, R5, R1
+add R4, R3, R3 #r4 recebe o dobro de r3
+sub R3, R4, R4 #r3 recebe zero
+...
