@@ -1,0 +1,33 @@
+address 0
+add R0, R1, R2
+sub R3, R4, R5
+zeros R31
+xor R2, R2, R1
+or R3, R3, R5
+passnota R8, R9, R10
+and R1, R1, R0
+asl R3, R4, 2
+asr R5, R6, R1
+lsl R5, R8, 4
+lsr R9, R10, R4
+passa R8, R29
+lch R8, const16
+lcl R8, const16
+load R0, 8(R3)
+store R1, 12(R3)
+jal 1024
+jr R10
+beq R4, R8, 1024
+bne R8, R15, 2048
+j 2048
+slt R0, R3, R4
+stli R1, R5, R6
+smt R11, R19, R27
+inc R3
+dec R3
+addi R4, R20, R31
+subi R24, R5, R31
+nand R2, R3, R3
+nor R3, R5, R5
+halt
+

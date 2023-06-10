@@ -12,6 +12,7 @@
 #define limiteTamanhoMemoriaTexto 16384
 #define numRegistradores 32
 #define lengthRegister 8
+#define c8 8 //const 8
 #define c16 16 //const 16
 #define c24 24 //const 24
 
@@ -32,7 +33,7 @@ class Processador {
         If *ifStage;
         Id *idStage;
         ExMem *exMemStage;
-        //Wb *wbStage;
+        Wb *wbStage;
         int qtdClocks;
         void incrementarClock();
 
@@ -66,7 +67,7 @@ Processador::~Processador() {
     delete regs;
     delete ifStage;
     //delete exMemStage;
-    //delete wbStage;
+    delete wbStage;
 }
 
 void Processador::executar() {
@@ -102,7 +103,8 @@ void Processador::executar() {
             incrementarClock();
 
             // estágio wb
-            // incrementarClock();
+            wbStage = new Wb(regs, ???, exMemStage, ???, idStage);
+            incrementarClock();
 
             // estágio if
             instrucaoAtual = ifStage->getInstrucao();

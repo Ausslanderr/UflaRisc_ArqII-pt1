@@ -28,15 +28,17 @@ void Wb::leituraEscritaRegistrador(){
 	// jal
 	if(controle->getRegwrite() == 1 and controle->getJump() == 1){
 
-        bitset<dataBus> novoRa(alu->r31);
+      //bitset<addressBus> novoRa(alu->getRetornoFuncao()); ??? seria o certo, porém setRegistrador só recebe bitset com dataBus(32bits)
 		
 		reg->setRegistrador(novoRa, 31);
 	}
 	
 	// lw
 	else if(controle->getRegwrite() == 1 and controle->getMemtoReg() == 1){
-		
-		reg->setRegistrador(alu->rc, id->getRa());
+
+		bitset<dataBus> novoDado(alu->getResultado());
+
+		reg->setRegistrador(novoDado, id->getRa());
 	}
 	
 	else if(controle->getRegwrite() == 1 and controle->getRegdst() == 1 and alu->getOverflow() == 0){

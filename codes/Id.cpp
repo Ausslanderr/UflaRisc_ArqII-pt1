@@ -12,6 +12,7 @@ class Id {
         bitset<dataBus> rbValue;
 	    bitset<lengthRegister> rc;
         bitset<dataBus> rcValue;
+        bitset<c8> const8; // 8
         bitset<c16> const16; //16
 	    bitset<c24> const24; //24
         void reset_valores();
@@ -29,6 +30,7 @@ class Id {
         bitset<dataBus> getRcValue()    {return rcValue;};
         bitset<c16> getConst16()        {return const16;};
         bitset<c24> getConst24()        {return const24;};
+        bitset<c8> getConst8()        {return const8;};
         Controle* getControle()         {return sinaisControle;};
         //void alter_Sinais(string opcode);
         // Metodo de depuração está no Controle.
@@ -83,6 +85,9 @@ void Id::decodificarInstrucao(bitset<dataBus> instrucaoBinaria) {
 	texto_Binario_Auxiliar = instrucaoString.substr(24, lengthRegister);//extrai os 8 bits do terceiro operando
 	rc = bitset<lengthRegister> (texto_Binario_Auxiliar);
     rcValue = regs->getRegistrador(rc);
+
+    texto_Binario_Auxiliar = instrucaoString.substr(c24, 8);
+    const8 = bitset<c8> (texto_Binario_Auxiliar);
 
     texto_Binario_Auxiliar = instrucaoString.substr(8, c16);
     const16 = bitset<c16> (texto_Binario_Auxiliar);

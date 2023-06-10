@@ -5,8 +5,8 @@ using namespace std;
 class Alu { 
 
     private:
-        bitset<dataBus> rc, ra, rb, zero;
-		bitset<addressBus> Const16, r31, PC;
+		bitset<dataBus> PC, Const8, Const16, Const24, rc, ra, rb, r31, zero;
+		bitset<addressBus> novo_PC, novo_r31;
 		Id *idStage;
 		If *ifStage;
 		Registradores *reg;
@@ -18,6 +18,7 @@ class Alu {
 		bool neg;
         void verificaNegativo(bitset<dataBus> rc);
 		void verificaOverflow(bitset<dataBus> ra, string operacao);
+		void converteBits(int operacao);
         bitset<dataBus> calculaBits(bitset<dataBus> ra, bitset<dataBus> rb, string operacao);
 
     public:
@@ -29,6 +30,7 @@ class Alu {
 		void threadsDeImpressao(bitset<dataBus> ra, int i);
 		bool getOverflow(){return overflow;};
 		bitset<dataBus> getResultado(){return rc;};
+		bitset<addressBus> getRetornoFuncao(){return novo_r31;};
 		//void resetFlagsDesvio(); Isso vai ser necessario, mesmo possuindo o construtor?
         
 };
@@ -40,15 +42,12 @@ Alu::Alu(Id *idStage, Controle *sinaisControle, If *ifStage, Registradores *reg)
 	this->ifStage = ifStage;
 	this->reg = reg;
 
-	PC = ifStage->getPc();
 	rc = idStage->getRcValue();
 	ra = idStage->getRaValue();
 	rb = idStage->getRbValue();
 	r31 = reg->getRegistrador(31);
-	Const16 = idStage->getConst16();
 	
-    //address = ???
-    //end = ???
+	converteBits(1);
 
     ALUzero = 0;
     zero = 0;
@@ -219,7 +218,7 @@ void Alu::instrucoesAritmeticas(){
 	// Slti
 	if (sinaisControle->getAluctrl() == "slti") {
 
- 		//rc = ra < valor_offset_address;
+ 		rc = ra < Const8;
     	// não causa overflow
     	verificaNegativo(rc);
     	zero = rc;
@@ -272,8 +271,7 @@ void Alu::instrucoesAritmeticas(){
 
 	// Addi
 	if(sinaisControle->getAluctrl() == "addi"){
-		//rc = ra + valor_offset_address;
-		//verifica_overflow(rc, ra, valor_offset_address, "adicao");
+		rc = calculaBits(ra, Const8, "adicao");
 		verificaNegativo(rc);
 		zero = rc;
 		
@@ -282,8 +280,7 @@ void Alu::instrucoesAritmeticas(){
 
 	// Subi
 	if(sinaisControle->getAluctrl() == "subi"){
-		//rc = ra - valor_offset_address;
-		//verifica_overflow(rc, ra, valor_offset_address, "subtracao");
+		rc = calculaBits(ra, Const8, "subtracao");
 		verificaNegativo(rc);
 		zero = rc;
 		
@@ -321,7 +318,7 @@ void Alu::instrucoesDeDesvio(){
 	// JUMP AND LINK
 	if(sinaisControle->getAluctrl() == "jal"){
 		r31 = PC; 
-		PC = end;	
+		PC = Const24;	
 		cout << "Eh uma instrucao de jal" << endl << endl;
 	}
 	
@@ -333,25 +330,32 @@ void Alu::instrucoesDeDesvio(){
 	
 	//  JUMP SE IGUAL (BEQ)
 	if(sinaisControle->getAluctrl() == "beq"){
-		PC = end; //tenho que tratar se j foi tomado (fazer um if)
+		if(ra == rb)
+			PC = Const8;
+
 		cout << "Eh uma instrucao de beq" << endl << endl;
 	}
 	
 	//  JUMP SE DIFERENTE (BNE)
 	if(sinaisControle->getAluctrl() == "bne"){
-		PC = end; //tenho que tratar se j foi tomado (fazer um if)
+		if(ra != rb){
+			PC = Const8;
+		}
+
 		cout << "Eh uma instrucao de bne" << endl << endl;
 	}
 	
 	//  JUMP INCONDICIONAL
 	if(sinaisControle->getAluctrl() == "j"){
-		PC = adress;
+		PC = Const24;
 		cout << "Eh uma instrucao de j" << endl << endl;
 	}
 	
-	// Alterar o PC e o r31 já que eles foram modificados
-	ifStage->desviaPc(PC);
-	reg->setRegistrador(r31, 31);
+	// Alterar o PC e o r31 já que eles foram modificados.
+
+	converteBits(2); // Converte o PC de 32 bits para novo_PC de 16, assim como r31 para novo_r31.
+	ifStage->desviaPc(novo_PC);
+	reg->setRegistrador(r31, 31); // novo_r31 nao é utilizado aqui pois r31 já esta em 32bits. novo_r31 só é utilizado em getRetornoFuncao(), exigindo 16 bits.
 	
 }
 
@@ -359,15 +363,57 @@ void Alu::instrucoesDeMemoria(){
 	
 	// LOAD WORD (vou refazer)
 	if(sinaisControle->getAluctrl() == "load"){
-		rc = memória[ra];
+		//rc = tenho que setar na memoria o ra;
 		cout << "Eh uma instrucao de load" << endl << endl;
 	}
 	
 	// STORE WORD (vou refazer)
 	if(sinaisControle->getAluctrl() == "store"){
-		memória[rc] = ra;
+		//tenho que setar na memoria o rc = ra;
 		cout << "Eh uma instrucao de store" << endl << endl;
 	}
+}
+
+void Alu::converteBits(int operacao) {
+
+	if(operacao == 1){ // Converte para 32
+
+    	bitset<16> PC = ifStage->getPc();
+
+		bitset<8> Const8 = idStage->getConst8();
+    	bitset<16> Const16 = idStage->getConst16();
+    	bitset<24> Const24 = idStage->getConst24();
+
+    	for (int i = 0; i < 16; i++) {
+        	this->PC[i] = PC[i];
+    	}
+
+		for (int i = 0; i < 8; i++) {
+        	this->Const8[i] = Const8[i];
+    	}
+
+    	for (int i = 0; i < 16; i++) {
+        	this->Const16[i] = Const16[i];
+    	}
+
+		for (int i = 0; i < 24; i++) {
+        	this->Const24[i] = Const24[i];
+    	}
+
+	}
+
+	else if(operacao == 2){ // Converte para 16
+		
+		for (int i = 0; i < 16; i++) {
+        	novo_PC[i] = this->PC[i];
+    	}
+
+		for (int i = 0; i < 16; i++) {
+        	novo_r31[i] = r31[i];
+    	}
+
+	}
+
 }
 
 bitset<dataBus> Alu::calculaBits(bitset<dataBus> ra, bitset<dataBus> rb, string operacao){

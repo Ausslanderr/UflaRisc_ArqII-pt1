@@ -158,8 +158,8 @@ void Controle :: alterarSinais(string opcode) {
         Jump = 0;
     }
     else if(opcode == "00001000") { // shift aritmético p/ esquerda b.8
-        Regdst = 0;
-        Regwrite = 0;
+        Regdst = 1;
+        Regwrite = 1;
         Aluctrl = "shift aritmetic left";
         Memread = 0;
         Memwrite = 0;
@@ -170,8 +170,8 @@ void Controle :: alterarSinais(string opcode) {
         Jump = 0;
     }
     else if(opcode == "00001001") { // shift aritmético p/ direita b.9
-        Regdst = 0;
-        Regwrite = 0;
+        Regdst = 1;
+        Regwrite = 1;
         Aluctrl = "shift aritmetic right";
         Memread = 0;
         Memwrite = 0;
@@ -183,8 +183,8 @@ void Controle :: alterarSinais(string opcode) {
     }
     //verificar
     else if(opcode == "00001010") { // shift lógico p/ esquerda b.10
-        Regdst = 0;
-        Regwrite = 0;
+        Regdst = 1;
+        Regwrite = 1;
         Aluctrl = "shift logic left";
         Memread = 0;
         Memwrite = 0;
@@ -196,8 +196,8 @@ void Controle :: alterarSinais(string opcode) {
     }
     //verificar
     else if(opcode == "00001011") { // shift lógico p/ direita b.11
-        Regdst = 0;
-        Regwrite = 0;
+        Regdst = 1;
+        Regwrite = 1;
         Aluctrl = "shift logic right";
         Memread = 0;
         Memwrite = 0;
