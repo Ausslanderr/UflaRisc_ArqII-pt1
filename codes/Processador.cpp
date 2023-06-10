@@ -98,7 +98,7 @@ void Processador::executar() {
             idStage->depuracao();
 
             // estágio ex/mem
-            exMemStage = new ExMem(regs, ifStage, idStage, idStage->getControle());
+            exMemStage = new ExMem(regs, ifStage, idStage, idStage->getControle(), memoria);
             processando = exMemStage->getAlu()->getHalt();
             exMemStage->getAlu()->mostrarFlags();
             incrementarClock();

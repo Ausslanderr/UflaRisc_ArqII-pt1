@@ -1,14 +1,13 @@
-#include <thread>
-
 class Alu { 
 
     private:
 		bitset<dataBus> PC, Const8, Const16, Const24, rc, ra, rb, r31, num, zero;
-		bitset<addressBus> novoPC;
+		bitset<addressBus> novoPC, novoRc;
 		Registradores *regs;
 		If *ifStage;
 		Id *idStage;
 		Controle *controle;
+		Memoria *memoria;
 		int rbInt; // Apenas usado para trabalhar com o bitset em função especifica ">> e <<", que exige um inteiro.
         bool ALUzero;
 		bool overflow;
@@ -22,13 +21,12 @@ class Alu {
         bitset<dataBus> calculaBits(bitset<dataBus> ra, bitset<dataBus> rb, string operacao);
 
     public:
-        Alu(Registradores *regs, If *ifStage, Id *idStage, Controle *controle);
+        Alu(Registradores *regs, If *ifStage, Id *idStage, Controle *controle, Memoria *memoria);
 		~Alu();
         void instrucoesAritmeticas();
         void instrucoesDeDesvio();
         void instrucoesDeMemoria();
         void mostrarFlags();
-		void threadsDeImpressao(bitset<dataBus> ra, int i);
 		bool getOverflow()					{return overflow;};
 		bitset<dataBus> getResultadoRa()	{return ra;};
 		bitset<dataBus> getResultadoRc()	{return rc;};
@@ -37,12 +35,13 @@ class Alu {
         
 };
 
-Alu::Alu(Registradores *regs, If *ifStage, Id *idStage, Controle *controle) {
+Alu::Alu(Registradores *regs, If *ifStage, Id *idStage, Controle *controle, Memoria *memoria) {
 
 	this->regs = regs;
 	this->ifStage = ifStage;
 	this->idStage = idStage;
 	this->controle = controle;
+	this->memoria = memoria;
 	
 	rc = idStage->getRcValue();
 	ra = idStage->getRaValue();
@@ -259,22 +258,20 @@ void Alu::instrucoesAritmeticas(){
 	// Smt
 	if (controle->getAluctrl() == "smt") {
 
-		const int numThreads = 2;
-    	thread threads[numThreads];
+		bool result = false; 
 
-    	// Cria as threads e inicia sua execução
-    	for (int i = 0; i < numThreads; ++i) {
-        	threads[i] = thread(threadsDeImpressao, ra, i);
-    	}
-
-    	// Aguarda a conclusão de todas as threads
-    	for (int i = 0; i < numThreads; ++i) {
-        	threads[i].join();
+    	for (int i = 31; i >= 0 && !result ; i--) {
+    		if (ra[i] > rb[i]) {
+        		rc = result;
+        	} 
+			else if (ra[i] < rb[i]) {
+            	rc = result;
+        	}
     	}
  		
-    	// não causa overflow
-    	// não causa neg
-    	zero = ra;
+		// nao causa overflow
+		verificaNegativo(rc);
+		zero = rc;
 
     	cout << "Eh uma instrucao de smt" << endl << endl;
 	}
@@ -382,10 +379,10 @@ void Alu::instrucoesDeDesvio(){
 		cout << "Eh uma instrucao de bne" << endl << endl;
 	}
 	
-	//  JUMP INCONDICIONAL
-	if(controle->getAluctrl() == "j"){
+	//  JUMP INCONDICIONAL e ADRESS
+	if(controle->getAluctrl() == "j" || controle->getAluctrl() == "adress"){
 		PC = Const24;
-		cout << "Eh uma instrucao de j" << endl << endl;
+		cout << "Eh uma instrucao de j ou adress" << endl << endl;
 	}
 	
 	// Alterar o PC e o r31 já que eles foram modificados.
@@ -406,6 +403,15 @@ void Alu::instrucoesDeMemoria(){
 	
 	// STORE WORD (vou refazer)
 	if(controle->getAluctrl() == "store"){
+
+		if (controle->getRegwrite() == 0  && controle->getMemwrite() == 1){
+
+			converteBits(3);
+
+			memoria->armazenarDado(ra, novoRc);
+			
+		}
+	}
 		//tenho que setar na memoria o rc = ra;
 		cout << "Eh uma instrucao de store" << endl << endl;
 	}
@@ -439,7 +445,7 @@ void Alu::converteBits(int operacao) {
 
 		rbInt = 0;
 
-		for (int i = 0; i < 32; ++i) { // Transforma rb bitset em int
+		for (int i = 0; i < 32; i++) { // Transforma rb bitset em int
         	rbInt <<= 1; 
         	rbInt |= rb[i];
     	}		
@@ -454,6 +460,14 @@ void Alu::converteBits(int operacao) {
 		
 		for (int i = 0; i < 16; i++) {
         	novoPC[i] = this->PC[i];
+    	}
+
+	}
+
+	else if(operacao == 3){
+
+		for (int i = 0; i < 16; i++) {
+        	novoRc[i] = rc[i];
     	}
 
 	}
@@ -512,10 +526,6 @@ void Alu::verificaNegativo(bitset<dataBus> rc){
         neg = 1;
     }
 
-}
-
-void Alu::threadsDeImpressao(bitset<dataBus> ra, int i){
-	cout<<"Testando Thread " << i << " com o valor de Ra: " << ra << endl; 
 }
 
 void Alu::mostrarFlags(){

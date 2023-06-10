@@ -44,14 +44,6 @@ void Wb::leituraEscritaRegistrador(){
 
 		regs->setRegistrador(novoDado, idStage->getRa());
 	}
-
-	// sw
-	else if(controle->getRegwrite() == 0  and controle->getMemwrite() == 1){
-
-		bitset<dataBus> novoDado(alu->getResultadoRa());
-
-		regs->setRegistrador(novoDado, idStage->getRc());
-	}
 	
 	// R
 	else if(controle->getRegwrite() == 1 and controle->getRegdst() == 1 and alu->getOverflow() == 0){
@@ -61,10 +53,4 @@ void Wb::leituraEscritaRegistrador(){
 		regs->setRegistrador(novoDado, idStage->getRc());
 	}
 	
-	else if(controle->getRegwrite() == 1 and controle->getRegdst() == 0 and alu->getOverflow() == 0){
-		
-		bitset<dataBus> novoDado(alu->getResultadoRc());
-		
-		regs->setRegistrador(novoDado, idStage->getRa());
-	}
 }

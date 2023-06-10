@@ -10,18 +10,18 @@ class ExMem{
 		void realizarOperacoes();
 		
 	public:
-		ExMem(Registradores *regs, If *ifStage, Id *idStage, Controle *controle);
+		ExMem(Registradores *regs, If *ifStage, Id *idStage, Controle *controle, Memoria *memoria);
 		~ExMem();
 		Alu* getAlu()	{return alu;};
 };
 
-ExMem::ExMem(Registradores *regs, If *ifStage, Id *idStage, Controle *controle) {
+ExMem::ExMem(Registradores *regs, If *ifStage, Id *idStage, Controle *controle, Memoria *memoria) {
 
 	this->regs = regs;
 	this->ifStage = ifStage;
 	this->controle = controle;
 	
-	alu = new Alu(regs, ifStage, idStage, controle);
+	alu = new Alu(regs, ifStage, idStage, controle, memoria);
 
 	realizarOperacoes();
 }

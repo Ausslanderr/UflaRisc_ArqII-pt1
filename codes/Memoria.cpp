@@ -7,7 +7,7 @@ class Memoria {
         Memoria();
         ~Memoria();
         void armazenarInstrucao(string instrucaoAtual, int enderecoMemoriaTexto);
-        void armazenarDado(string dado, int enderecoMemoriaDado);
+        void armazenarDado(bitset<dataBus> dado, bitset<addressBus> enderecoMemoriaDado);
         bitset<dataBus> getInstrucao(bitset<addressBus> posicao);
 };
 
@@ -30,11 +30,17 @@ void Memoria::armazenarInstrucao(string instrucaoAtual, int enderecoMemoriaTexto
     mem[enderecoMemoriaTexto] = instrucaoBitSet;
 }
 
-void Memoria::armazenarDado(string dado, int enderecoMemoriaDado) {
+void Memoria::armazenarDado(bitset<dataBus> dado, bitset<addressBus> enderecoMemoriaDado) {
 
-    bitset<dataBus> dadoBitSet (dado);
+    int aux = (int)enderecoMemoriaDado.to_ulong();
 
-    mem[enderecoMemoriaDado] = dadoBitSet;
+    if(aux < limiteTamanhoMemoriaTexto or aux >= tamanhoMemoria) {
+
+        throw(5);
+    }
+    
+    mem[aux] = dado;
+
 }
 
 bitset<dataBus> Memoria::getInstrucao(bitset<addressBus> posicao) {
