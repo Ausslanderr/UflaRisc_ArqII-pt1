@@ -6,7 +6,7 @@ class Alu {
 
     private:
 		bitset<dataBus> PC, Const8, Const16, Const24, rc, ra, rb, r31, zero;
-		bitset<addressBus> novo_PC, novo_r31;
+		bitset<addressBus> novoPC;
 		Id *idStage;
 		If *ifStage;
 		Registradores *reg;
@@ -29,8 +29,11 @@ class Alu {
         void mostrarFlags();
 		void threadsDeImpressao(bitset<dataBus> ra, int i);
 		bool getOverflow(){return overflow;};
-		bitset<dataBus> getResultado(){return rc;};
-		bitset<addressBus> getRetornoFuncao(){return novo_r31;};
+		bitset<dataBus> getResultadoRa(){return ra;};
+		bitset<dataBus> getResultadoRc(){return rc;};
+		bitset<dataBus> getRetornoFuncao(){return r31;};
+
+
 		//void resetFlagsDesvio(); Isso vai ser necessario, mesmo possuindo o construtor?
         
 };
@@ -353,9 +356,9 @@ void Alu::instrucoesDeDesvio(){
 	
 	// Alterar o PC e o r31 já que eles foram modificados.
 
-	converteBits(2); // Converte o PC de 32 bits para novo_PC de 16, assim como r31 para novo_r31.
-	ifStage->desviaPc(novo_PC);
-	reg->setRegistrador(r31, 31); // novo_r31 nao é utilizado aqui pois r31 já esta em 32bits. novo_r31 só é utilizado em getRetornoFuncao(), exigindo 16 bits.
+	converteBits(2);
+	ifStage->desviaPc(novoPC);
+	reg->setRegistrador(r31, 31); 
 	
 }
 
@@ -405,11 +408,7 @@ void Alu::converteBits(int operacao) {
 	else if(operacao == 2){ // Converte para 16
 		
 		for (int i = 0; i < 16; i++) {
-        	novo_PC[i] = this->PC[i];
-    	}
-
-		for (int i = 0; i < 16; i++) {
-        	novo_r31[i] = r31[i];
+        	novoPC[i] = this->PC[i];
     	}
 
 	}

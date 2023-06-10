@@ -28,29 +28,38 @@ void Wb::leituraEscritaRegistrador(){
 	// jal
 	if(controle->getRegwrite() == 1 and controle->getJump() == 1){
 
-      //bitset<addressBus> novoRa(alu->getRetornoFuncao()); ??? seria o certo, porém setRegistrador só recebe bitset com dataBus(32bits)
+      bitset<dataBus> novoR31(alu->getRetornoFuncao()); 
 		
-		reg->setRegistrador(novoRa, 31);
+		reg->setRegistrador(novoR31, 31);
 	}
 	
 	// lw
 	else if(controle->getRegwrite() == 1 and controle->getMemtoReg() == 1){
 
-		bitset<dataBus> novoDado(alu->getResultado());
+		bitset<dataBus> novoDado(alu->getResultadoRc());
 
 		reg->setRegistrador(novoDado, id->getRa());
 	}
+
+	// sw
+	else if(controle->getRegwrite() == 0  and controle->getMemwrite() == 1){
+
+		bitset<dataBus> novoDado(alu->getResultadoRa());
+
+		reg->setRegistrador(novoDado, id->getRc());
+	}
 	
+	// R
 	else if(controle->getRegwrite() == 1 and controle->getRegdst() == 1 and alu->getOverflow() == 0){
 				
-		bitset<dataBus> novoDado(alu->getResultado());
+		bitset<dataBus> novoDado(alu->getResultadoRc());
 		
-		reg->setRegistrador(novoDado, id->getRb());
+		reg->setRegistrador(novoDado, id->getRc());
 	}
 	
 	else if(controle->getRegwrite() == 1 and controle->getRegdst() == 0 and alu->getOverflow() == 0){
 		
-		bitset<dataBus> novoDado(alu->getResultado());
+		bitset<dataBus> novoDado(alu->getResultadoRc());
 		
 		reg->setRegistrador(novoDado, id->getRa());
 	}

@@ -28,6 +28,8 @@ using namespace std;
 class Processador {
 
     private:
+        Alu *alu;
+        Controle *controle;
         Conversor *conversor;
         Registradores *regs;
         If *ifStage;
@@ -63,10 +65,12 @@ Processador::~Processador() {
 
     cout << "processador morreu" << endl;
 
+    delete alu;
+    delete controle;
     delete conversor;
     delete regs;
     delete ifStage;
-    //delete exMemStage;
+    delete exMemStage;
     delete wbStage;
 }
 
@@ -103,7 +107,7 @@ void Processador::executar() {
             incrementarClock();
 
             // estágio wb
-            wbStage = new Wb(regs, ???, exMemStage, ???, idStage);
+            wbStage = new Wb(regs, controle, exMemStage, alu, idStage);
             incrementarClock();
 
             // estágio if
