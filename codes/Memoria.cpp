@@ -18,9 +18,9 @@ Memoria::Memoria() {
 
 Memoria::~Memoria() {
 
-    cout << "memoria morreu" << endl;
-
     delete[] mem;
+
+    cout << "memoria morreu" << endl;
 }
 
 void Memoria::armazenarInstrucao(string instrucaoAtual, int enderecoMemoriaTexto) {

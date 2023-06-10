@@ -8,6 +8,7 @@ class Registradores {
 		~Registradores();
         bitset<dataBus> getRegistrador(bitset<lengthRegister> numeroRegistrador);
         void setRegistrador(bitset<dataBus> dadoParaEscrever, bitset<lengthRegister> numeroRegistrador);
+		void depuracao();
 };
 
 Registradores::Registradores() {
@@ -20,9 +21,9 @@ Registradores::Registradores() {
 
 Registradores::~Registradores() {
 
-	cout << "registrador morreu" << endl;
-
 	delete[] vetorReg;
+
+	cout << "registrador morreu" << endl;
 }
 
 bitset<dataBus> Registradores::getRegistrador(bitset<lengthRegister> numeroRegistrador){
@@ -227,4 +228,41 @@ void Registradores::setRegistrador(bitset<dataBus> dadoParaEscrever, bitset<leng
 	else {
 		throw(9);
 	}
+}
+
+void Registradores::depuracao() {
+
+	cout << "Conteúdos dos registradores:" << endl;
+	cout << "\tzero    : "	<< vetorReg[0].to_ulong() << endl;
+	cout << "\tat (1)  : "	<< vetorReg[1].to_ulong() << endl;
+	cout << "\tv0 (2)  : "	<< vetorReg[2].to_ulong() << endl;
+	cout << "\tv1 (3)  : "	<< vetorReg[3].to_ulong() << endl;
+	cout << "\ta0 (4)  : "	<< vetorReg[4].to_ulong() << endl;
+	cout << "\ta1 (5)  : "	<< vetorReg[5].to_ulong() << endl;
+	cout << "\ta2 (6)  : "	<< vetorReg[6].to_ulong() << endl;
+	cout << "\ta3 (7)  : "	<< vetorReg[7].to_ulong() << endl;
+	cout << "\tt0 (8)  : "	<< vetorReg[8].to_ulong() << endl;
+	cout << "\tt1 (9)  : "	<< vetorReg[9].to_ulong() << endl;
+	cout << "\tt2 (10) : "	<< vetorReg[10].to_ulong() << endl;
+	cout << "\tt3 (11) : "	<< vetorReg[11].to_ulong() << endl;
+	cout << "\tt4 (12) : "	<< vetorReg[12].to_ulong() << endl;
+	cout << "\tt5 (13) : "	<< vetorReg[13].to_ulong() << endl;
+	cout << "\tt6 (14) : "	<< vetorReg[14].to_ulong() << endl;
+	cout << "\tt7 (15) : "	<< vetorReg[15].to_ulong() << endl;
+	cout << "\ts0 (16) : "	<< vetorReg[16].to_ulong() << endl;
+	cout << "\ts1 (17) : "	<< vetorReg[17].to_ulong() << endl;
+	cout << "\ts2 (18) : "	<< vetorReg[18].to_ulong() << endl;
+	cout << "\ts3 (19) : "	<< vetorReg[19].to_ulong() << endl;
+	cout << "\ts4 (20) : "	<< vetorReg[20].to_ulong() << endl;
+	cout << "\ts5 (21) : "	<< vetorReg[21].to_ulong() << endl;
+	cout << "\ts6 (22) : "	<< vetorReg[22].to_ulong() << endl;
+	cout << "\ts7 (23) : "	<< vetorReg[23].to_ulong() << endl;
+	cout << "\tt8 (24) : "	<< vetorReg[24].to_ulong() << endl;
+	cout << "\tt9 (25) : "	<< vetorReg[25].to_ulong() << endl;
+	cout << "\tk0 (26) : "	<< vetorReg[26].to_ulong() << endl;
+	cout << "\tk1 (27) : "	<< vetorReg[27].to_ulong() << endl;
+	cout << "\tgp (28) : "	<< vetorReg[28].to_ulong() << endl;
+	cout << "\tsp (29) : "	<< vetorReg[29].to_ulong() << endl;
+	cout << "\tfp (30) : "	<< vetorReg[30].to_ulong() << endl;
+	cout << "\tra (31) : "	<< vetorReg[31].to_ulong() << endl << endl;
 }

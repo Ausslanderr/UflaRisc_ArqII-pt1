@@ -17,6 +17,7 @@ class Id {
 	    bitset<c24> const24; //24
         void reset_valores();
         void decodificarInstrucao(bitset<dataBus> instrucaoBinaria);
+        bool verificarRegistrador(string textoBin);
 
     public:
         Id(bitset<dataBus> instrucaoBinaria, Registradores *regs);
@@ -46,9 +47,9 @@ Id::Id(bitset<dataBus> instrucaoBinaria, Registradores *regs) {
 
 Id::~Id(){
 
-    cout << "Id morreu" << endl;
-
     delete sinaisControle;
+
+    cout << "Id morreu" << endl;
 }
 
 void Id::reset_valores() {
@@ -75,16 +76,22 @@ void Id::decodificarInstrucao(bitset<dataBus> instrucaoBinaria) {
     sinaisControle = new Controle(auxOpcode); // enviando os sinais de controle para a classe configura-los
     
     texto_Binario_Auxiliar = instrucaoString.substr(8, lengthRegister);//extrai os 8 bits do primeiro operando
-	ra = bitset<lengthRegister> (texto_Binario_Auxiliar);
-    raValue = regs->getRegistrador(ra);
+    if(verificarRegistrador(texto_Binario_Auxiliar)) {
+        ra = bitset<lengthRegister> (texto_Binario_Auxiliar);
+        raValue = regs->getRegistrador(ra);
+    }
 	
 	texto_Binario_Auxiliar = instrucaoString.substr(16, lengthRegister);//extrai os 8 bits do segundo operando
-	rb = bitset<lengthRegister> (texto_Binario_Auxiliar);
-    rbValue = regs->getRegistrador(rb);
+    if(verificarRegistrador(texto_Binario_Auxiliar)) {
+        rb = bitset<lengthRegister> (texto_Binario_Auxiliar);
+        rbValue = regs->getRegistrador(rb);
+    }
 	
 	texto_Binario_Auxiliar = instrucaoString.substr(24, lengthRegister);//extrai os 8 bits do terceiro operando
-	rc = bitset<lengthRegister> (texto_Binario_Auxiliar);
-    rcValue = regs->getRegistrador(rc);
+    if(verificarRegistrador(texto_Binario_Auxiliar)) {
+        rc = bitset<lengthRegister> (texto_Binario_Auxiliar);
+        rcValue = regs->getRegistrador(rc);
+    }
 
     texto_Binario_Auxiliar = instrucaoString.substr(c24, 8);
     const8 = bitset<c8> (texto_Binario_Auxiliar);
@@ -96,13 +103,33 @@ void Id::decodificarInstrucao(bitset<dataBus> instrucaoBinaria) {
     const24 = bitset<c24> (texto_Binario_Auxiliar);
 }
 
+bool Id::verificarRegistrador(string textoBin) {
+
+    long resultado = 0;
+	long potencia_dois = 1;
+	
+	for(int i = textoBin.size() - 1; i >= 0; i--) {
+		
+		if(textoBin[i] == '1') {
+            resultado += potencia_dois;
+        }
+		potencia_dois *= 2;
+	}
+
+    if(resultado >= 0 and resultado <= 31) {
+        return true;
+    }
+
+    return false;
+}
+
 void Id::depuracao() {
 
     cout << "Valores das variáveis do Id: " << endl;
     cout << "\tOpcode: "    << opcode << endl;
-    cout << "\tRa: "        << ra << endl;
-    cout << "\tRb: "        << rb << endl;
-    cout << "\tRc: "        << rc << endl;
+    cout << "\tRa: "        << ra.to_ulong() << endl;
+    cout << "\tRb: "        << rb.to_ulong() << endl;
+    cout << "\tRc: "        << rc.to_ulong() << endl;
     cout << "\tconst16: "   << const16 << endl;
     cout << "\tconst24: "   << const24 << endl << endl;
 

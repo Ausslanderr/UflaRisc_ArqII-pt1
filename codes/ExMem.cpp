@@ -4,34 +4,46 @@ class ExMem{
 	
 	private:
 		Alu *alu;
-		Id *idStage;
+		Registradores *regs;
 		If *ifStage;
-		Registradores *reg;
-		Controle *sinaisControle;
+		Controle *controle;
+		void realizarOperacoes();
 		
 	public:
-		ExMem(Id *idStage, Controle *sinaisControle, If *ifStage, Registradores *reg);
-		void realizarOperacoes();
+		ExMem(Registradores *regs, If *ifStage, Id *idStage, Controle *controle);
+		~ExMem();
+		Alu* getAlu()	{return alu;};
 };
 
-ExMem::ExMem(Id *idStage, Controle *sinaisControle, If *ifStage, Registradores *reg) {
+ExMem::ExMem(Registradores *regs, If *ifStage, Id *idStage, Controle *controle) {
 
-	this->idStage = idStage;
-	this->sinaisControle = sinaisControle;
-	alu = new Alu(idStage, sinaisControle, ifStage, reg);
+	this->regs = regs;
+	this->ifStage = ifStage;
+	this->controle = controle;
+	
+	alu = new Alu(regs, ifStage, idStage, controle);
+
+	realizarOperacoes();
+}
+
+ExMem::~ExMem() {
+
+	delete alu;
+
+	cout << "ExMem morreu" << endl;
 }
 
 void ExMem::realizarOperacoes(){
 	
 	// Realiza os calculos aritmeticos
-	if((sinaisControle->getBranch() == 0) && (sinaisControle->getJump() == 0) && (sinaisControle->getMemwrite() == 0) && (sinaisControle->getMemread() == 0))
+	if((controle->getBranch() == 0) && (controle->getJump() == 0) && (controle->getMemwrite() == 0) && (controle->getMemread() == 0))
 		alu->instrucoesAritmeticas();
 		
 	// Realiza os calculos dos desvios
-	else if((sinaisControle->getBranch() == 1) || (sinaisControle->getJump() == 1))
+	else if((controle->getBranch() == 1) || (controle->getJump() == 1))
 		alu->instrucoesDeDesvio();
 		
 	// Realiza os calculos para armazenar valores na memoria
-	else if((sinaisControle->getBranch() == 0) && (sinaisControle->getJump() == 0) && ((sinaisControle->getMemwrite() == 1) || (sinaisControle->getMemread() == 1)))
+	else if((controle->getBranch() == 0) && (controle->getJump() == 0) && ((controle->getMemwrite() == 1) || (controle->getMemread() == 1)))
 		alu->instrucoesDeMemoria();
 }

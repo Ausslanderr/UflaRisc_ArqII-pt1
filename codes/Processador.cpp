@@ -28,8 +28,6 @@ using namespace std;
 class Processador {
 
     private:
-        Alu *alu;
-        Controle *controle;
         Conversor *conversor;
         Registradores *regs;
         If *ifStage;
@@ -54,41 +52,39 @@ Processador::Processador() {
     catch(int erro) {
         throw(erro);
     }
-    
-    //exMemStage = new ExMem();
-    //wbStage = new Wb();
 
     qtdClocks = 0;
 }
 
 Processador::~Processador() {
 
-    cout << "processador morreu" << endl;
-
-    delete alu;
-    delete controle;
     delete conversor;
     delete regs;
-    delete ifStage;
-    delete exMemStage;
-    delete wbStage;
+
+    cout << "processador morreu" << endl;
 }
 
 void Processador::executar() {
+
+    bool processando = true;
 
     try {
         bitset<addressBus> PC (conversor->getEnderecoComecoMemmoriaTexto());
         Memoria *memoria = conversor->getMemoria();
         ifStage = new If(memoria, PC);
 
-        // estágio if inicial
-        bitset<dataBus> instrucaoAtual = ifStage->getInstrucao();
-        incrementarClock();
-
-        cout << "Bits da instrução atual: " << instrucaoAtual << endl;
+        cin.ignore();
 
         // Loop principal do processador
-        while(!ifStage->ehInstrucaoFinal()) {
+        while(processando) {
+
+            // estágio if
+            bitset<dataBus> instrucaoAtual = ifStage->getInstrucao();
+            incrementarClock();
+
+            cout << "Bits da instrução atual: " << instrucaoAtual << endl;
+
+            regs->depuracao();
 
             // estágio id
             idStage = new Id(instrucaoAtual, regs);
@@ -100,22 +96,28 @@ void Processador::executar() {
             *   apenas possam fazer get dos atributos dessas classes 
             */
             idStage->depuracao();
-            delete idStage;
 
             // estágio ex/mem
-            exMemStage = new ExMem(idStage, idStage->getControle(), ifStage, regs);
+            exMemStage = new ExMem(regs, ifStage, idStage, idStage->getControle());
+            processando = exMemStage->getAlu()->getHalt();
+            exMemStage->getAlu()->mostrarFlags();
             incrementarClock();
 
             // estágio wb
-            wbStage = new Wb(regs, controle, exMemStage, alu, idStage);
+            wbStage = new Wb(regs, idStage, idStage->getControle(), exMemStage->getAlu());
             incrementarClock();
 
-            // estágio if
-            instrucaoAtual = ifStage->getInstrucao();
-            incrementarClock();
+            delete idStage;
+            delete exMemStage;
+            delete wbStage;
 
-            cout << "Bits da instrução atual: " << instrucaoAtual << endl;
+            cout << endl << "#########################################################################" << endl << endl;
+
+            cout << "Pressione ENTER para a próxima instrução . . . ";
+            cin.get();
         }
+
+        delete ifStage;
 
         cout << "Número de clocks do programa: " << qtdClocks << endl;
     }

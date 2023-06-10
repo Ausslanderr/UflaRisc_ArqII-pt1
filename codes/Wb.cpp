@@ -1,26 +1,30 @@
 class Wb{
 	
 	private:
-		Registradores *reg;
+		Registradores *regs;
+		Id *idStage;
 		Controle *controle;
-		ExMem *estagioExMem;
         Alu *alu;
-		Id *id;
-
+		void leituraEscritaRegistrador();
 		
 	public:
-		Wb(Registradores *regPointer, Controle *controlePointer, ExMem *estagioExMemPointer, Alu *aluPointer, Id *idPointer);
-		void leituraEscritaRegistrador();
+		Wb(Registradores *regs, Id *idStage, Controle *controle, Alu *alu);
+		~Wb();
 };
 
-Wb::Wb(Registradores *regPointer, Controle *controlePointer, ExMem *estagioExMemPointer, Alu *aluPointer, Id *idPointer){
+Wb::Wb(Registradores *regs, Id *idStage, Controle *controle, Alu *alu){
 	
-	reg = regPointer;
-	controle = controlePointer;
-	estagioExMem = estagioExMemPointer;
-    alu = aluPointer;
-	id = idPointer;
-	
+	this->regs = regs;
+	this->idStage = idStage;
+	this->controle = controle;
+	this->alu = alu;
+
+	leituraEscritaRegistrador();
+}
+
+Wb::~Wb() {
+
+	cout << "wb morreu" << endl;
 }
 
 void Wb::leituraEscritaRegistrador(){
@@ -30,7 +34,7 @@ void Wb::leituraEscritaRegistrador(){
 
       bitset<dataBus> novoR31(alu->getRetornoFuncao()); 
 		
-		reg->setRegistrador(novoR31, 31);
+		regs->setRegistrador(novoR31, 31);
 	}
 	
 	// lw
@@ -38,7 +42,7 @@ void Wb::leituraEscritaRegistrador(){
 
 		bitset<dataBus> novoDado(alu->getResultadoRc());
 
-		reg->setRegistrador(novoDado, id->getRa());
+		regs->setRegistrador(novoDado, idStage->getRa());
 	}
 
 	// sw
@@ -46,7 +50,7 @@ void Wb::leituraEscritaRegistrador(){
 
 		bitset<dataBus> novoDado(alu->getResultadoRa());
 
-		reg->setRegistrador(novoDado, id->getRc());
+		regs->setRegistrador(novoDado, idStage->getRc());
 	}
 	
 	// R
@@ -54,15 +58,13 @@ void Wb::leituraEscritaRegistrador(){
 				
 		bitset<dataBus> novoDado(alu->getResultadoRc());
 		
-		reg->setRegistrador(novoDado, id->getRc());
+		regs->setRegistrador(novoDado, idStage->getRc());
 	}
 	
 	else if(controle->getRegwrite() == 1 and controle->getRegdst() == 0 and alu->getOverflow() == 0){
 		
 		bitset<dataBus> novoDado(alu->getResultadoRc());
 		
-		reg->setRegistrador(novoDado, id->getRa());
+		regs->setRegistrador(novoDado, idStage->getRa());
 	}
 }
-
-

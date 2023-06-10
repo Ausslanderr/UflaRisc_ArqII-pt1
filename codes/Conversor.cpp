@@ -34,9 +34,9 @@ Conversor::Conversor() {
 
 Conversor::~Conversor() {
 
-    cout << "conversor morreu" << endl;
-
     delete memoria;
+
+    cout << "conversor morreu" << endl;
 }
 
 void Conversor::leituraArquivoEntrada() {
@@ -67,6 +67,11 @@ void Conversor::leituraArquivoEntrada() {
 
             // retorna a linha de instrucao particionada em um vector
             vector<string> *instrucaoAtualSeparada = separarString(instrucaoAtual, " ");
+
+            if(instrucaoAtualSeparada->empty()) {
+                
+                continue;
+            }
             
             // a primeira instrucao deve ser obrigatoriamente um address
             // caso não for, a posição da memória texto começa em 0

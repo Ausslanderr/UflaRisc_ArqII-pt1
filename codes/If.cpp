@@ -56,16 +56,6 @@ void If::adicionarPc() {
 	cout << "Valor atual do PC: " << PC << endl;
 }
 
-bool If::ehInstrucaoFinal() {
-
-    bitset<dataBus> comparacao ("11111111111111111111111111111111");
-
-    if(registradorInstrucoes == comparacao) {
-        return true;
-    }
-    return false;
-}
-
 bitset<addressBus> If::getPc(){
     return PC;
 } 

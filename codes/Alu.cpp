@@ -1,54 +1,52 @@
 #include <thread>
 
-using namespace std;
-
 class Alu { 
 
     private:
 		bitset<dataBus> PC, Const8, Const16, Const24, rc, ra, rb, r31, zero;
 		bitset<addressBus> novoPC;
-		Id *idStage;
+		Registradores *regs;
 		If *ifStage;
-		Registradores *reg;
-		Controle *sinaisControle;
+		Id *idStage;
+		Controle *controle;
         bool ALUzero;
 		bool overflow;
 		bool carry;
         bool borrow;
 		bool neg;
+		bool continuar;
         void verificaNegativo(bitset<dataBus> rc);
 		void verificaOverflow(bitset<dataBus> ra, string operacao);
 		void converteBits(int operacao);
         bitset<dataBus> calculaBits(bitset<dataBus> ra, bitset<dataBus> rb, string operacao);
 
     public:
-        Alu(Id *idStage, Controle *sinaisControle, If *ifStage, Registradores *reg);
+        Alu(Registradores *regs, If *ifStage, Id *idStage, Controle *controle);
+		~Alu();
         void instrucoesAritmeticas();
         void instrucoesDeDesvio();
         void instrucoesDeMemoria();
         void mostrarFlags();
 		void threadsDeImpressao(bitset<dataBus> ra, int i);
-		bool getOverflow(){return overflow;};
-		bitset<dataBus> getResultadoRa(){return ra;};
-		bitset<dataBus> getResultadoRc(){return rc;};
-		bitset<dataBus> getRetornoFuncao(){return r31;};
-
-
-		//void resetFlagsDesvio(); Isso vai ser necessario, mesmo possuindo o construtor?
+		bool getOverflow()					{return overflow;};
+		bitset<dataBus> getResultadoRa()	{return ra;};
+		bitset<dataBus> getResultadoRc()	{return rc;};
+		bitset<dataBus> getRetornoFuncao()	{return r31;};
+		bool getHalt()						{return continuar;};
         
 };
 
-Alu::Alu(Id *idStage, Controle *sinaisControle, If *ifStage, Registradores *reg) {
+Alu::Alu(Registradores *regs, If *ifStage, Id *idStage, Controle *controle) {
 
-	this->idStage = idStage;
-	this->sinaisControle = sinaisControle;
+	this->regs = regs;
 	this->ifStage = ifStage;
-	this->reg = reg;
-
+	this->idStage = idStage;
+	this->controle = controle;
+	
 	rc = idStage->getRcValue();
 	ra = idStage->getRaValue();
 	rb = idStage->getRbValue();
-	r31 = reg->getRegistrador(31);
+	r31 = regs->getRegistrador(31);
 	
 	converteBits(1);
 
@@ -58,6 +56,12 @@ Alu::Alu(Id *idStage, Controle *sinaisControle, If *ifStage, Registradores *reg)
 	carry = 0;
     borrow = 0;
 	neg = 0;
+	continuar = true;
+}
+
+Alu::~Alu() {
+
+	cout << "alu morreu" << endl;
 }
 
 void Alu::instrucoesAritmeticas(){
@@ -65,7 +69,7 @@ void Alu::instrucoesAritmeticas(){
 	bool aux = 0;
 	
 	// SOMA INTEIRA
-	if(sinaisControle->getAluctrl() == "add"){
+	if(controle->getAluctrl() == "add"){
 		rc = calculaBits(ra, rb, "adicao");
 		verificaNegativo(rc);
 		zero = rc;
@@ -74,7 +78,7 @@ void Alu::instrucoesAritmeticas(){
 	}
 	
 	// SUBTRAÇÃO INTEIRA
-	if(sinaisControle->getAluctrl() == "sub"){
+	if(controle->getAluctrl() == "sub"){
 		rc = calculaBits(ra, rb, "subtracao");
 		verificaNegativo(rc);
 		zero = rc;
@@ -83,7 +87,7 @@ void Alu::instrucoesAritmeticas(){
 	}
 	
 	// ZERA
-	if(sinaisControle->getAluctrl() == "zeros"){
+	if(controle->getAluctrl() == "zeros"){
 		rc = 0;
 		// nao causa overflow
 		// neg por padrao é zero
@@ -93,7 +97,7 @@ void Alu::instrucoesAritmeticas(){
 	}
 	
 	// XOR LÓGICO
-	if(sinaisControle->getAluctrl() == "xor"){
+	if(controle->getAluctrl() == "xor"){
 		rc = ra ^ rb;
 		// nao causa overflow
 		verificaNegativo(rc);
@@ -103,7 +107,7 @@ void Alu::instrucoesAritmeticas(){
 	}
 	
 	// OR LÓGICO
-	if(sinaisControle->getAluctrl() == "or"){
+	if(controle->getAluctrl() == "or"){
 		rc = ra | rb;
 		// nao causa overflow
 		verificaNegativo(rc);
@@ -113,7 +117,7 @@ void Alu::instrucoesAritmeticas(){
 	}
 	
 	// NOT
-	if(sinaisControle->getAluctrl() == "passnota"){
+	if(controle->getAluctrl() == "passnota"){
 		rc = ~ra;
 		// nao causa overflow
 		verificaNegativo(rc);
@@ -123,7 +127,7 @@ void Alu::instrucoesAritmeticas(){
 	}
 	
 	// AND LÓGICO
-	if(sinaisControle->getAluctrl() == "and"){
+	if(controle->getAluctrl() == "and"){
 		rc = ra & rb;
 		// nao causa overflow
 		verificaNegativo(rc);
@@ -133,7 +137,7 @@ void Alu::instrucoesAritmeticas(){
 	}
 	
 	// SHIFT ARITMÉTICO PARA A ESQUERDA
-	if(sinaisControle->getAluctrl() == "asl"){
+	/*if(controle->getAluctrl() == "asl"){
 		aux = ra[31]; 
 		rc = ra << rb;
 		rc[31] = aux;
@@ -142,10 +146,10 @@ void Alu::instrucoesAritmeticas(){
 		zero = rc;
 		
 		cout << "Eh uma instrucao de asl" << endl << endl;
-	}
+	}*/
 	
 	// SHIFT ARITMÉTICO PARA A DIREITA
-	if(sinaisControle->getAluctrl() == "asr"){
+	/*if(controle->getAluctrl() == "asr"){
 		aux = ra[31]; 
 		rc = ra >> rb;
 		rc[31] = aux;
@@ -154,10 +158,10 @@ void Alu::instrucoesAritmeticas(){
 		zero = rc;
 		
 		cout << "Eh uma instrucao de asr" << endl << endl;
-	}
+	}*/
 
 	// SHIFT LÓGICO PARA A ESQUERDA
-	if(sinaisControle->getAluctrl() == "lsl"){
+	/*if(controle->getAluctrl() == "lsl"){
 		rc = ra << rb;
 		rc[31] = aux;
 		// nao causa overflow
@@ -165,10 +169,10 @@ void Alu::instrucoesAritmeticas(){
 		zero = rc;
 		
 		cout << "Eh uma instrucao de lsl" << endl << endl;
-	}
+	}*/
 	
 	// SHIFT LÓGICO PARA A DIREITA
-	if(sinaisControle->getAluctrl() == "lsr"){
+	/*if(controle->getAluctrl() == "lsr"){
 		rc = ra >> rb;
 		rc[31] = aux;
 		// nao causa overflow
@@ -176,10 +180,10 @@ void Alu::instrucoesAritmeticas(){
 		zero = rc;
 		
 		cout << "Eh uma instrucao de lsr" << endl << endl;
-	}
+	}*/
 	
 	// COPIA
-	if(sinaisControle->getAluctrl() == "passa"){
+	if(controle->getAluctrl() == "passa"){
 		rc = ra;
 		// nao causa overflow
 		verificaNegativo(rc);
@@ -189,37 +193,37 @@ void Alu::instrucoesAritmeticas(){
 	}
 	
 	// CARREGA CONSTANTE NOS 2 BYTES MAIS SIGNIFICATIVOS
-	if(sinaisControle->getAluctrl() == "lch"){
+	/*if(controle->getAluctrl() == "lch"){
 		rc = (Const16 << 16) | (rc & 0x0000ffff);
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
 		
 		cout << "Eh uma instrucao de lch" << endl << endl;
-	}
+	}*/
 	
 	// CARREGA CONSTANTE NOS 2 BYTES MENOS SIGNIFICATIVOS
-	if(sinaisControle->getAluctrl() == "lcl"){
+	/*if(controle->getAluctrl() == "lcl"){
 		rc = Const16 | (rc & 0x0000ffff);
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
 		
 		cout << "Eh uma instrucao de lcl" << endl << endl;
-	}
+	}*/
 
 	// Slt
-	if(sinaisControle->getAluctrl() == "slt"){
+	/*if(controle->getAluctrl() == "slt"){
 		rc = ra < rb;
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
 		
 		cout << "Eh uma instrucao de slt" << endl << endl;
-	}
+	}*/
 
 	// Slti
-	if (sinaisControle->getAluctrl() == "slti") {
+	/*if (controle->getAluctrl() == "slti") {
 
  		rc = ra < Const8;
     	// não causa overflow
@@ -227,10 +231,10 @@ void Alu::instrucoesAritmeticas(){
     	zero = rc;
 
     	cout << "Eh uma instrucao de slti" << endl << endl;
-	}
+	}*/
 
 	// Smt
-	if (sinaisControle->getAluctrl() == "smt") {
+	/*if (controle->getAluctrl() == "smt") {
 
 		const int numThreads = 2;
     	thread threads[numThreads];
@@ -250,10 +254,10 @@ void Alu::instrucoesAritmeticas(){
     	zero = ra;
 
     	cout << "Eh uma instrucao de smt" << endl << endl;
-	}
+	}*/
 
 	// Inc
-	if (sinaisControle->getAluctrl() == "inc") {
+	if (controle->getAluctrl() == "inc") {
 
  		rc = calculaBits(rc, 1, "adicao");
     	verificaNegativo(rc);
@@ -263,7 +267,7 @@ void Alu::instrucoesAritmeticas(){
 	}
 
 	// Dec
-	if (sinaisControle->getAluctrl() == "dec") {
+	if (controle->getAluctrl() == "dec") {
 
  		rc = calculaBits(rc, 1, "subtracao");
     	verificaNegativo(rc);
@@ -273,7 +277,7 @@ void Alu::instrucoesAritmeticas(){
 	}
 
 	// Addi
-	if(sinaisControle->getAluctrl() == "addi"){
+	if(controle->getAluctrl() == "addi"){
 		rc = calculaBits(ra, Const8, "adicao");
 		verificaNegativo(rc);
 		zero = rc;
@@ -282,7 +286,7 @@ void Alu::instrucoesAritmeticas(){
 	}
 
 	// Subi
-	if(sinaisControle->getAluctrl() == "subi"){
+	if(controle->getAluctrl() == "subi"){
 		rc = calculaBits(ra, Const8, "subtracao");
 		verificaNegativo(rc);
 		zero = rc;
@@ -291,7 +295,7 @@ void Alu::instrucoesAritmeticas(){
 	}
 
 	// Nand
-	if (sinaisControle->getAluctrl() == "nand") {
+	if (controle->getAluctrl() == "nand") {
     	rc = ~(ra & rb);
     	// não causa overflow
     	verificaNegativo(rc);
@@ -301,13 +305,20 @@ void Alu::instrucoesAritmeticas(){
 	}
 
 	// Nor
-	if(sinaisControle->getAluctrl() == "nor"){
+	if(controle->getAluctrl() == "nor"){
 		rc = ~(ra | rb);
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
 		
 		cout << "Eh uma instrucao de nor" << endl << endl;
+	}
+
+	// halt
+	if(controle->getAluctrl() == "halt - saída de sistema") {
+		continuar = false;
+
+		cout << "Eh uma instrucao de halt" << endl << endl;
 	}
 	
 	// Verifica se algum resultado corresponde a 0 para acionar a flag
@@ -319,20 +330,20 @@ void Alu::instrucoesAritmeticas(){
 void Alu::instrucoesDeDesvio(){
 
 	// JUMP AND LINK
-	if(sinaisControle->getAluctrl() == "jal"){
+	if(controle->getAluctrl() == "jal"){
 		r31 = PC; 
 		PC = Const24;	
 		cout << "Eh uma instrucao de jal" << endl << endl;
 	}
 	
 	// JUMP REGISTER
-	if(sinaisControle->getAluctrl() == "jr"){
+	if(controle->getAluctrl() == "jr"){
 		PC = r31;	
 		cout << "Eh uma instrucao de jr" << endl << endl;
 	}
 	
 	//  JUMP SE IGUAL (BEQ)
-	if(sinaisControle->getAluctrl() == "beq"){
+	if(controle->getAluctrl() == "beq"){
 		if(ra == rb)
 			PC = Const8;
 
@@ -340,7 +351,7 @@ void Alu::instrucoesDeDesvio(){
 	}
 	
 	//  JUMP SE DIFERENTE (BNE)
-	if(sinaisControle->getAluctrl() == "bne"){
+	if(controle->getAluctrl() == "bne"){
 		if(ra != rb){
 			PC = Const8;
 		}
@@ -349,7 +360,7 @@ void Alu::instrucoesDeDesvio(){
 	}
 	
 	//  JUMP INCONDICIONAL
-	if(sinaisControle->getAluctrl() == "j"){
+	if(controle->getAluctrl() == "j"){
 		PC = Const24;
 		cout << "Eh uma instrucao de j" << endl << endl;
 	}
@@ -358,20 +369,20 @@ void Alu::instrucoesDeDesvio(){
 
 	converteBits(2);
 	ifStage->desviaPc(novoPC);
-	reg->setRegistrador(r31, 31); 
+	regs->setRegistrador(r31, 31); 
 	
 }
 
 void Alu::instrucoesDeMemoria(){
 	
 	// LOAD WORD (vou refazer)
-	if(sinaisControle->getAluctrl() == "load"){
+	if(controle->getAluctrl() == "load"){
 		//rc = tenho que setar na memoria o ra;
 		cout << "Eh uma instrucao de load" << endl << endl;
 	}
 	
 	// STORE WORD (vou refazer)
-	if(sinaisControle->getAluctrl() == "store"){
+	if(controle->getAluctrl() == "store"){
 		//tenho que setar na memoria o rc = ra;
 		cout << "Eh uma instrucao de store" << endl << endl;
 	}
@@ -469,27 +480,16 @@ void Alu::verificaNegativo(bitset<dataBus> rc){
 
 }
 
-void::threadsDeImpressao(bitset<dataBus> ra, int i){
+void Alu::threadsDeImpressao(bitset<dataBus> ra, int i){
 	cout<<"Testando Thread " << i << " com o valor de Ra: " << ra << endl; 
 }
 
 void Alu::mostrarFlags(){
 	
 	cout << "Flags da ALU e endereco de desvio: " << endl;
-	cout << "\tFlag de Zero: " << ALUzero << endl;
-    cout << "\tCarry: " << carry << endl;
-    cout << "\tNegativo: " << neg << endl;
+	cout << "\tFlag de Zero: "		<< ALUzero << endl;
+    cout << "\tCarry: " 			<< carry << endl;
+    cout << "\tNegativo: " 			<< neg << endl;
 	cout << "\tSinal de Overflow: " << overflow << endl;
 	cout << "\tCalculo do endereco de desvio (valor de resultado): " << rc << endl;
 }
-
-/*
-void ExMem::resetFlagsDesvio(){
-	
-	ALUzero = 0;
-	Overflow = 0;
-	resultado_endereco = 0;
-	HI = LO = resultado_ALU = 0;
-	valor_novo_ra = valor_novo_PC = 0;
-}
-*/

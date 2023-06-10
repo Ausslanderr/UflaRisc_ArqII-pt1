@@ -221,7 +221,7 @@ void Controle :: alterarSinais(string opcode) {
         Jump = 0;
     }
     //verificar
-    else if(opcode == "00001110") { // carrega constante de 16 bits nos 2 bytes mais significativos b.13
+    else if(opcode == "00001101") { // carrega constante de 16 bits nos 2 bytes mais significativos b.13
         Regdst = 0;
         Regwrite = 0;
         Aluctrl = "b13 - constante 16 bits nos 2 bytes mais significativos";
@@ -234,7 +234,7 @@ void Controle :: alterarSinais(string opcode) {
         Jump = 0;
     }
     //verificar
-    else if(opcode == "00001111") { // carrega constante de 16 bits nos 2 bytes menos significativos b.14
+    else if(opcode == "00001110") { // carrega constante de 16 bits nos 2 bytes menos significativos b.14
         Regdst = 0;
         Regwrite = 0;
         Aluctrl = "b14 - constante 16 bits nos 2 bytes menos significativos";
@@ -246,7 +246,7 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 0;
     }
-    else if(opcode == "00010000") { // lw b.15
+    else if(opcode == "00001111") { // lw b.15
         Regdst = 0;
         Regwrite = 1;
         Aluctrl = "load word";
@@ -258,7 +258,7 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 0;
     }
-    else if(opcode == "00010001") { // sw b.16
+    else if(opcode == "00010000") { // sw b.16
         Regdst = 0;
         Regwrite = 0;
         Aluctrl = "store word";
@@ -270,7 +270,7 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 0;
     }
-    else if(opcode == "00010010") { // jump and link (jal) b.17                                                    
+    else if(opcode == "00010001") { // jump and link (jal) b.17                                                    
         Regdst = 0;
         Regwrite = 0;
         Aluctrl = "jal";
@@ -282,7 +282,7 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 1;                             
     }                               
-    else if(opcode == "00010011") { // jump register (jr) b.18 
+    else if(opcode == "00010010") { // jump register (jr) b.18 
         Regdst = 0;
         Regwrite = 0;
         Aluctrl = "jr";
@@ -294,7 +294,7 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 1;
     }
-    else if(opcode == "00010100") { // jump if equal b.19
+    else if(opcode == "00010011") { // jump if equal b.19
         Regdst = 0;
         Regwrite = 0;
         Aluctrl = "jump if equal";
@@ -306,7 +306,7 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 1;
         Jump = 0;
     }   
-    else if(opcode == "00010101") { // jump if not-equal b.20
+    else if(opcode == "00010100") { // jump if not-equal b.20
         Regdst = 0;
         Regwrite = 0;
         Aluctrl = "jump if not-equal";
@@ -318,7 +318,7 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 1;
         Jump = 0;
     }
-    else if(opcode == "00010110") { // jump incondicional b.21
+    else if(opcode == "00010101") { // jump incondicional b.21
         Regdst = 0;
         Regwrite = 0;
         Aluctrl = "jump inconditional";
@@ -331,7 +331,7 @@ void Controle :: alterarSinais(string opcode) {
         Jump = 1;
     } 
     //verificar
-    else if(opcode == "11111111") { // halt b.22
+    else if(opcode == "11111111") { // halt
         Regdst = 0;
         Regwrite = 0;
         Aluctrl = "halt - saída de sistema";
@@ -345,7 +345,7 @@ void Controle :: alterarSinais(string opcode) {
     }
 
     // Instruções do grupo (9)
-    else if(opcode =="00011000") { // set less than b.23
+    else if(opcode =="00010110") { // set less than b.22
         Regdst = 1;
         Regwrite = 1;
         Aluctrl = "slt";
@@ -357,7 +357,7 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 0;
     }
-    else if(opcode =="00011001") { // set less than immediate b.24
+    else if(opcode =="00010111") { // set less than immediate b.23
         Regdst = 1;
         Regwrite = 1;
         Aluctrl = "slti";
@@ -369,7 +369,7 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 0;
     }
-    else if(opcode =="00011010") { //smt b.25 (set more than)
+    else if(opcode =="00011000") { //smt b.24 (set more than)
         Regdst = 1;
         Regwrite = 1;
         Aluctrl = "smt";
@@ -382,7 +382,7 @@ void Controle :: alterarSinais(string opcode) {
         Jump = 0;
     }
     //verificar
-    else if(opcode =="00011011") { //inc b.26 (increment)
+    else if(opcode =="00011001") { //inc b.25 (increment)
         Regdst = 0;
         Regwrite = 0;
         Aluctrl = "inc";
@@ -395,7 +395,7 @@ void Controle :: alterarSinais(string opcode) {
         Jump = 0;
     }
     //verificar
-    else if(opcode =="00011100") { // dec b.27 (decrement)
+    else if(opcode =="00011010") { // dec b.26 (decrement)
         Regdst = 0;
         Regwrite = 0;
         Aluctrl = "dec";
@@ -407,7 +407,7 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 0;
     }
-    else if(opcode =="00011101") { //addi b.28
+    else if(opcode =="00011011") { //addi b.27
         Regdst = 0;
         Regwrite = 1;
         Aluctrl = "addi";
@@ -419,7 +419,7 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 0;
     }
-    else if(opcode =="00011110") { //subi b.29
+    else if(opcode =="00011100") { //subi b.28
         Regdst = 1;
         Regwrite = 1;
         Aluctrl = "subi";
@@ -431,7 +431,7 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 0;
     }
-    else if(opcode =="00011111") { //nand b.30
+    else if(opcode =="00011101") { //nand b.29
         Regdst = 1;
         Regwrite = 1;
         Aluctrl = "nand";
@@ -443,7 +443,7 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 0;
     }
-    else if(opcode =="00100000") { //nor b.31
+    else if(opcode =="00011110") { //nor b.30
         Regdst = 1;
         Regwrite = 1;
         Aluctrl = "nor";
