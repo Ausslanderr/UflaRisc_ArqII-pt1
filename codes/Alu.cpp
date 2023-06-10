@@ -3,12 +3,13 @@
 class Alu { 
 
     private:
-		bitset<dataBus> PC, Const8, Const16, Const24, rc, ra, rb, r31, zero;
+		bitset<dataBus> PC, Const8, Const16, Const24, rc, ra, rb, r31, num, zero;
 		bitset<addressBus> novoPC;
 		Registradores *regs;
 		If *ifStage;
 		Id *idStage;
 		Controle *controle;
+		int rbInt; // Apenas usado para trabalhar com o bitset em função especifica ">> e <<", que exige um inteiro.
         bool ALUzero;
 		bool overflow;
 		bool carry;
@@ -56,6 +57,7 @@ Alu::Alu(Registradores *regs, If *ifStage, Id *idStage, Controle *controle) {
 	carry = 0;
     borrow = 0;
 	neg = 0;
+	num = (65535);
 	continuar = true;
 }
 
@@ -137,50 +139,50 @@ void Alu::instrucoesAritmeticas(){
 	}
 	
 	// SHIFT ARITMÉTICO PARA A ESQUERDA
-	/*if(controle->getAluctrl() == "asl"){
+	if(controle->getAluctrl() == "asl"){
 		aux = ra[31]; 
-		rc = ra << rb;
+		rc = ra << rbInt;
 		rc[31] = aux;
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
 		
 		cout << "Eh uma instrucao de asl" << endl << endl;
-	}*/
+	}
 	
 	// SHIFT ARITMÉTICO PARA A DIREITA
-	/*if(controle->getAluctrl() == "asr"){
+	if(controle->getAluctrl() == "asr"){
 		aux = ra[31]; 
-		rc = ra >> rb;
+		rc = ra >> rbInt;
 		rc[31] = aux;
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
 		
 		cout << "Eh uma instrucao de asr" << endl << endl;
-	}*/
+	}
 
 	// SHIFT LÓGICO PARA A ESQUERDA
-	/*if(controle->getAluctrl() == "lsl"){
-		rc = ra << rb;
+	if(controle->getAluctrl() == "lsl"){
+		rc = ra << rbInt;
 		rc[31] = aux;
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
 		
 		cout << "Eh uma instrucao de lsl" << endl << endl;
-	}*/
+	}
 	
 	// SHIFT LÓGICO PARA A DIREITA
-	/*if(controle->getAluctrl() == "lsr"){
-		rc = ra >> rb;
+	if(controle->getAluctrl() == "lsr"){
+		rc = ra >> rbInt;
 		rc[31] = aux;
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
 		
 		cout << "Eh uma instrucao de lsr" << endl << endl;
-	}*/
+	}
 	
 	// COPIA
 	if(controle->getAluctrl() == "passa"){
@@ -193,48 +195,69 @@ void Alu::instrucoesAritmeticas(){
 	}
 	
 	// CARREGA CONSTANTE NOS 2 BYTES MAIS SIGNIFICATIVOS
-	/*if(controle->getAluctrl() == "lch"){
-		rc = (Const16 << 16) | (rc & 0x0000ffff);
+	if(controle->getAluctrl() == "lch"){
+		rc = (Const16 << 16) | (rc & num);
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
 		
 		cout << "Eh uma instrucao de lch" << endl << endl;
-	}*/
+	}
 	
 	// CARREGA CONSTANTE NOS 2 BYTES MENOS SIGNIFICATIVOS
-	/*if(controle->getAluctrl() == "lcl"){
-		rc = Const16 | (rc & 0x0000ffff);
+	if(controle->getAluctrl() == "lcl"){
+		rc = Const16 | (rc & num);
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
 		
 		cout << "Eh uma instrucao de lcl" << endl << endl;
-	}*/
+	}
 
 	// Slt
-	/*if(controle->getAluctrl() == "slt"){
-		rc = ra < rb;
+	if(controle->getAluctrl() == "slt"){
+		
+	    bool result = false; 
+
+    	for (int i = 31; i >= 0 && !result ; i--) {
+    		if (ra[i] < rb[i]) {
+        		rc = result;
+        	} 
+			else if (ra[i] > rb[i]) {
+            	rc = result;
+        	}
+    	}
+
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
 		
 		cout << "Eh uma instrucao de slt" << endl << endl;
-	}*/
+	}
 
 	// Slti
-	/*if (controle->getAluctrl() == "slti") {
+	if (controle->getAluctrl() == "slti") {
 
- 		rc = ra < Const8;
+		bool result = false;
+
+    	for (int i = 31; i >= 0 && !result ; i--) {
+    		if (ra[i] < Const8[i]) {
+        		rc = result;
+        	} 
+			else if (ra[i] > Const8[i]) {
+            	rc = result;
+        	}
+    	}
+
     	// não causa overflow
     	verificaNegativo(rc);
     	zero = rc;
 
     	cout << "Eh uma instrucao de slti" << endl << endl;
-	}*/
+	}
 
 	// Smt
-	/*if (controle->getAluctrl() == "smt") {
+	if (controle->getAluctrl() == "smt") {
 
 		const int numThreads = 2;
     	thread threads[numThreads];
@@ -254,7 +277,7 @@ void Alu::instrucoesAritmeticas(){
     	zero = ra;
 
     	cout << "Eh uma instrucao de smt" << endl << endl;
-	}*/
+	}
 
 	// Inc
 	if (controle->getAluctrl() == "inc") {
@@ -413,6 +436,17 @@ void Alu::converteBits(int operacao) {
 		for (int i = 0; i < 24; i++) {
         	this->Const24[i] = Const24[i];
     	}
+
+		rbInt = 0;
+
+		for (int i = 0; i < 32; ++i) { // Transforma rb bitset em int
+        	rbInt <<= 1; 
+        	rbInt |= rb[i];
+    	}		
+
+		if (rc[31]) { // Caso o valor do bitset seja negativo, o inteiro dele também deve ser negativo. Faz o mesmo que verificaNegativo(), mas não mexe na variavel neg.
+    		rbInt = -rbInt;
+		}
 
 	}
 
