@@ -1,0 +1,34 @@
+# instruções do processador
+address 12182   # o começo da memória de texto começa na posição 12182
+add R8, R16, 17
+sub R8, R9, R10
+zeros R16
+xor R16, R17, R18
+or R2, R16, R17
+passnota R2, R3
+and R16, R17, R18
+asl R2, R16, R6
+asr R3, R16, R5
+lsl R2, R16, R6
+lsr R3, R16, R5
+passa R2, R16
+lch R8 56312
+lcl R8 14032
+load R20, R7
+store R20, R6
+jal 1234
+jr R10
+beq R8, R13, 5123
+bne R8, R13, 3245
+j 312
+halt
+# instruções do grupo
+slt R8, R2, R8
+slti R8, R2, 122
+smt R8, R2, R0
+inc R8
+dec R8
+addi R8 123
+subi R29 4
+nand R16, R17, R18
+nor R2, R16, R17

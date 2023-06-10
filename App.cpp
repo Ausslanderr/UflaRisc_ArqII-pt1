@@ -24,10 +24,6 @@ int main() {
                 cout << "O valor de address é inválido!" << endl;
                 break;
 
-            case 3:
-                cout << "A instrução address não é a primeira!" << endl;
-                break;
-
             case 4:
                 cout << "O arquivo possui uma instrução inválida!" << endl;
                 break;

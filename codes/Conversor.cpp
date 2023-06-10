@@ -69,22 +69,25 @@ void Conversor::leituraArquivoEntrada() {
             vector<string> *instrucaoAtualSeparada = separarString(instrucaoAtual, " ");
             
             // a primeira instrucao deve ser obrigatoriamente um address
-            if(instrucaoAtualSeparada->at(0) == "address" and !primeiro) {
+            // caso não for, a posição da memória texto começa em 0
+            if(!primeiro) {
 
                 primeiro = true;
 
-                bool aux = verificarIntAddress(instrucaoAtualSeparada->at(1));
+                if(instrucaoAtualSeparada->at(0) == "address") {
 
-                if(!aux) {
-                    throw(2);
+                    bool aux = verificarIntAddress(instrucaoAtualSeparada->at(1));
+
+                    if(!aux) {
+                        throw(2);
+                    }
+                }
+
+                else {
+                    enderecoComecoMemoriaTexto = 0;
                 }
 
                 enderecoMemoriaTexto = enderecoComecoMemoriaTexto;
-            }
-
-            else if(!primeiro) {
-
-                throw(3);
             }
 
             instrucaoAtual = retornarInstrucaoEmString(instrucaoAtualSeparada);
@@ -109,7 +112,7 @@ bool Conversor::verificarIntAddress(string str) {
 
     int aux = stoi(str);
     
-    if(aux >= pow(2, addressBus) or aux < 0) {
+    if(aux >= limiteTamanhoMemoriaTexto or aux < 0) {
         
         return false;
     }

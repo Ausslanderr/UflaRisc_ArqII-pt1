@@ -13,6 +13,9 @@ class Registradores {
 Registradores::Registradores() {
 
 	vetorReg = new bitset<dataBus>[numRegistradores];
+
+	vetorReg[28] = limiteTamanhoMemoriaTexto;	// gp
+	vetorReg[29] = tamanhoMemoria - 1;	// sp
 }
 
 Registradores::~Registradores() {

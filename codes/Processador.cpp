@@ -9,6 +9,7 @@
 #define dataBus 32
 #define addressBus 16
 #define tamanhoMemoria 65536
+#define limiteTamanhoMemoriaTexto 16384
 #define numRegistradores 32
 #define lengthRegister 8
 #define c16 16 //const 16
@@ -97,7 +98,7 @@ void Processador::executar() {
             delete idStage;
 
             // estágio ex/mem
-            exMemStage = new ExMem(idStage);
+            exMemStage = new ExMem(idStage, idStage->getControle(), ifStage, regs);
             incrementarClock();
 
             // estágio wb
