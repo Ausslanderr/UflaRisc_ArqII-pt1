@@ -12,7 +12,6 @@ class If {
         bitset<dataBus> getInstrucao();
         bitset<addressBus> getPc();
         void desviaPc(bitset<addressBus> PC);
-        bool ehInstrucaoFinal();
 };
 
 If::If(Memoria *memoria, bitset<addressBus> PC) {
@@ -26,7 +25,7 @@ If::~If() {
     cout << "If morreu" << endl;
 }
 
-bitset<dataBus> If::getInstrucao(){
+bitset<dataBus> If::getInstrucao() {
 
     try {
         registradorInstrucoes = memoria->getInstrucao(PC);
@@ -51,15 +50,30 @@ void If::adicionarPc() {
 		carry = (PC[i] & inc[i]) | (carry & (PC[i] ^ inc[i]));  // Calcula o carry para o próximo bit
 	}
 
+    int aux = (int)sum.to_ulong();
+
+    if(aux < 0 or aux >= limiteTamanhoMemoriaTexto) {
+
+        throw(3);
+    }
+
     PC = sum;
 	
 	cout << "Valor atual do PC: " << PC << endl;
 }
 
-bitset<addressBus> If::getPc(){
+bitset<addressBus> If::getPc() {
     return PC;
 } 
 
-void If::desviaPc(bitset<addressBus> PC){
+void If::desviaPc(bitset<addressBus> PC) {
+
+    int aux = (int)PC.to_ulong();
+
+    if(aux < 0 or aux >= limiteTamanhoMemoriaTexto) {
+
+        throw(10);
+    }
+
     this->PC = PC;
 }

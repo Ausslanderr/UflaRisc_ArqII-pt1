@@ -26,7 +26,7 @@ Registradores::~Registradores() {
 	cout << "registrador morreu" << endl;
 }
 
-bitset<dataBus> Registradores::getRegistrador(bitset<lengthRegister> numeroRegistrador){
+bitset<dataBus> Registradores::getRegistrador(bitset<lengthRegister> numeroRegistrador) {
 
 	if(numeroRegistrador == bitset<lengthRegister> ("00000000")) {
 		return vetorReg[0];
@@ -127,7 +127,14 @@ bitset<dataBus> Registradores::getRegistrador(bitset<lengthRegister> numeroRegis
 	throw(6);
 }
 
-void Registradores::setRegistrador(bitset<dataBus> dadoParaEscrever, bitset<lengthRegister> numeroRegistrador){
+void Registradores::setRegistrador(bitset<dataBus> dadoParaEscrever, bitset<lengthRegister> numeroRegistrador) {
+
+	long aux = conversorBinInteiro(dadoParaEscrever);
+
+    if(aux < -2147483648 or aux > 2147483647) {
+
+        throw(11);
+    }
 
 	if(numeroRegistrador == bitset<lengthRegister> ("00000000")) {
 		throw(7);

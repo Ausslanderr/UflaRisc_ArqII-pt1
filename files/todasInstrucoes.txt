@@ -1,6 +1,6 @@
 # instruções do processador
 address 12182   # o começo da memória de texto começa na posição 12182
-add R8, R16, 17
+add R8, R16, R17
 sub R8, R9, R10
 zeros R16
 xor R16, R17, R18
@@ -17,9 +17,9 @@ lcl R8 14032
 load R20, R7
 store R20, R6
 jal 1234
-jr R10
-beq R8, R13, 5123
-bne R8, R13, 3245
+jr R31
+beq R8, R13, 12
+bne R8, R13, 76
 j 312
 halt
 # instruções do grupo
@@ -32,3 +32,4 @@ addi R8 123
 subi R29 4
 nand R16, R17, R18
 nor R2, R16, R17
+EOF

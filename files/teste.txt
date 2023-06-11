@@ -1,4 +1,5 @@
-subi R8, R0, 10
-subi R9, R0, -10
+addi R8, R0, 10
+addi R9, R0, 127
+add R10, R8, R9
 halt
 EOF

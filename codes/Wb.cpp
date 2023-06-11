@@ -32,15 +32,15 @@ Wb::~Wb() {
 void Wb::leituraEscritaRegistrador(){
 	
 	// jal
-	if(controle->getRegwrite() == 1 and controle->getJump() == 1){
+	if(controle->getRegwrite() == 1 and controle->getJump() == 1) {
 
-      bitset<dataBus> novoR31(alu->getRetornoFuncao()); 
+    	bitset<dataBus> novoR31(alu->getRetornoFuncao()); 
 		
 		regs->setRegistrador(novoR31, 31);
 	}
 	
 	// lw
-	else if(controle->getRegwrite() == 1 and controle->getMemtoReg() == 1){
+	else if(controle->getRegwrite() == 1 and controle->getMemtoReg() == 1) {
 
 		bitset<dataBus> novoDado = memoria->getDado(alu->getResultadoRa());
 
@@ -48,7 +48,7 @@ void Wb::leituraEscritaRegistrador(){
 	}
 	
 	// addi e subi
-	else if(controle->getRegwrite() == 1 and controle->getRegdst() == 1 and alu->getOverflow() == 0){
+	else if(controle->getRegwrite() == 1 and controle->getRegdst() == 1 and alu->getOverflow() == 0) {
 				
 		bitset<dataBus> novoDado(alu->getResultadoRc());
 		
@@ -56,7 +56,7 @@ void Wb::leituraEscritaRegistrador(){
 	}
 
 	// R
-	else if(controle->getRegwrite() == 1 and controle->getRegdst() == 0 and alu->getOverflow() == 0){
+	else if(controle->getRegwrite() == 1 and controle->getRegdst() == 0 and alu->getOverflow() == 0) {
 				
 		bitset<dataBus> novoDado(alu->getResultadoRc());
 		

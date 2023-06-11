@@ -27,8 +27,6 @@ class Controle {
         bool getMemtoReg()  {return MemtoReg;};
         bool getBranch()    {return Branch;};
         bool getJump()      {return Jump;};
-        
-        //Precisarei dos Set's ?... NÃO
         void depuracao_controle();
 };
 
@@ -181,7 +179,6 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 0;
     }
-    //verificar
     else if(opcode == "00001010") { // shift lógico p/ esquerda b.10
         Regdst = 0;
         Regwrite = 1;
@@ -194,7 +191,6 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 0;
     }
-    //verificar
     else if(opcode == "00001011") { // shift lógico p/ direita b.11
         Regdst = 0;
         Regwrite = 1;
@@ -207,7 +203,6 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 0;
     }
-    //verificar
     else if(opcode == "00001100") { // copia b.12
         Regdst = 0;
         Regwrite = 1;
@@ -220,7 +215,6 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 0;
     }
-    //verificar
     else if(opcode == "00001101") { // carrega constante de 16 bits nos 2 bytes mais significativos b.13
         Regdst = 0;
         Regwrite = 1;
@@ -233,7 +227,6 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 0;
     }
-    //verificar
     else if(opcode == "00001110") { // carrega constante de 16 bits nos 2 bytes menos significativos b.14
         Regdst = 0;
         Regwrite = 1;
@@ -330,7 +323,6 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 1;
     } 
-    //verificar
     else if(opcode == "11111111") { // halt
         Regdst = 0;
         Regwrite = 0;
@@ -381,7 +373,6 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 0;
     }
-    //verificar
     else if(opcode =="00011001") { //inc b.25 (increment)
         Regdst = 0;
         Regwrite = 1;
@@ -394,7 +385,6 @@ void Controle :: alterarSinais(string opcode) {
         Branch = 0;
         Jump = 0;
     }
-    //verificar
     else if(opcode =="00011010") { // dec b.26 (decrement)
         Regdst = 0;
         Regwrite = 1;

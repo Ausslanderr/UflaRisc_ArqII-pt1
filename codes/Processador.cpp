@@ -18,6 +18,52 @@
 
 using namespace std;
 
+// converte um binario para inteiro (considera o sinal)
+long conversorBinInteiro(bitset<dataBus> bin) {
+
+    long resultado = 0;
+    long potencia = 1;
+    bool ehNeg = false;
+
+   // negativo
+    if(bin[dataBus - 1] == 1) {
+
+        ehNeg = true;
+
+        // invertido
+        bitset<32> invertido = ~bin;
+
+        // invertido + 1
+        bool carry;
+	    bitset<dataBus> inc(1);
+	    bitset<dataBus> sum;
+	
+	    for(int i = 0; i < dataBus; i++) {
+		
+		    sum[i] = invertido[i] ^ inc[i] ^ carry;
+		    carry = (invertido[i] & inc[i]) | (carry & (invertido[i] ^ inc[i]));
+	    }
+
+        bin = sum;
+    }
+
+    // conversão
+    for(int i = 0; i <= dataBus - 1; i++) {
+
+        if(bin[i] == 1) {
+            resultado += potencia;
+        }
+
+        potencia *= 2;
+    }
+
+    if(ehNeg) {
+        resultado *= -1;
+    }
+
+    return resultado;
+}
+
 #include "Conversor.cpp"
 #include "Registradores.cpp"
 #include "If.cpp"
@@ -88,14 +134,8 @@ void Processador::executar() {
 
             // estágio id
             idStage = new Id(instrucaoAtual, regs);
-            incrementarClock();
-
-            /*
-            *   depuração id e controle (não é um estágio, apagar antes de entregar)
-            *   decidi deletar o idStage para que os estágios ex/mem e wb 
-            *   apenas possam fazer get dos atributos dessas classes 
-            */
             idStage->depuracao();
+            incrementarClock();
 
             // estágio ex/mem
             exMemStage = new ExMem(regs, ifStage, idStage, idStage->getControle(), memoria);

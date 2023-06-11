@@ -28,6 +28,11 @@ void Memoria::armazenarInstrucao(string instrucaoAtual, int enderecoMemoriaTexto
 
     bitset<dataBus> instrucaoBitSet (instrucaoAtual);
 
+    if(enderecoMemoriaTexto < 0 or enderecoMemoriaTexto >= limiteTamanhoMemoriaTexto) {
+
+        throw(5);
+    }
+
     mem[enderecoMemoriaTexto] = instrucaoBitSet;
 }
 

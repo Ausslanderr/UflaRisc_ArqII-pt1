@@ -24,6 +24,10 @@ int main() {
                 cout << "O valor de address é inválido!" << endl;
                 break;
 
+            case 3:
+                cout << "O valor do PC foi ultrapassado!" << endl;
+                break;
+
             case 4:
                 cout << "O arquivo possui uma instrução inválida!" << endl;
                 break;
@@ -46,6 +50,30 @@ int main() {
 
             case 9:
                 cout << "Tentativa de escrever em um registrador inexistente!" << endl;
+                break;
+
+            case 10:
+                cout << "O valor setado no PC é inválido!" << endl;
+                break;
+
+            case 11:
+                cout << "O valor setado no registrador é inválido (está fora do range de 32 bits)!" << endl;
+                break;
+
+            case 12:
+                cout << "Overflow da adição ou subtração!" << endl;
+                break;
+
+            case 13:
+                cout << "Algum operando de alguma instrução do código está fora do range de 8 bits!" << endl;
+                break;
+
+            case 14:
+                cout << "Algum operando de alguma instrução do código está fora do range de 16 bits!" << endl;
+                break;
+
+            case 15:
+                cout << "Algum operando de alguma instrução do código está fora do range de 24 bits!" << endl;
                 break;
 
             default:
