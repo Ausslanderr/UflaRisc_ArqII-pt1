@@ -216,13 +216,15 @@ void Alu::instrucoesAritmeticas(){
 	if(controle->getAluctrl() == "slt"){
 		
 	    bool result = false; 
+		rc = result;
 
     	for (int i = 31; i >= 0 && !result ; i--) {
     		if (ra[i] < rb[i]) {
+				result = 1;
         		rc = result;
         	} 
 			else if (ra[i] > rb[i]) {
-            	rc = result;
+				break;
         	}
     	}
 
@@ -237,13 +239,15 @@ void Alu::instrucoesAritmeticas(){
 	if (controle->getAluctrl() == "slti") {
 
 		bool result = false;
+		rc = result;
 
     	for (int i = 31; i >= 0 && !result ; i--) {
-    		if (ra[i] < Const8[i]) {
+    		if (rb[i] < Const8[i]) {
+        		result = 1;
         		rc = result;
         	} 
-			else if (ra[i] > Const8[i]) {
-            	rc = result;
+			else if (rb[i] > Const8[i]) {
+            	break;
         	}
     	}
 
@@ -258,19 +262,17 @@ void Alu::instrucoesAritmeticas(){
 	if (controle->getAluctrl() == "smt") {
 
 		bool result = false; 
+		rc = result;
 
     	for (int i = 31; i >= 0 && !result ; i--) {
     		if (ra[i] > rb[i]) {
+				result = 1;
         		rc = result;
         	} 
 			else if (ra[i] < rb[i]) {
-            	rc = result;
+				break;
         	}
     	}
- 		
-		// nao causa overflow
-		verificaNegativo(rc);
-		zero = rc;
 
     	cout << "Eh uma instrucao de smt" << endl << endl;
 	}
@@ -315,7 +317,24 @@ void Alu::instrucoesAritmeticas(){
 
 	// Nand
 	if (controle->getAluctrl() == "nand") {
-    	rc = ~(ra & rb);
+
+		bool comeco = false;
+
+		for (int i = 31; i >= 0; i--) {
+
+			if(!comeco and ra[i] == 0 and rb[i] == 0) {
+				continue;
+			}
+			else {
+				comeco = true;
+				if((ra[i] & rb[i]) == 0) {
+					rc[i] = 1;
+				}
+				else {
+					rc[i] = 0;
+				}
+			}
+    	}
     	// não causa overflow
     	verificaNegativo(rc);
     	zero = rc;
@@ -325,7 +344,24 @@ void Alu::instrucoesAritmeticas(){
 
 	// Nor
 	if(controle->getAluctrl() == "nor"){
-		rc = ~(ra | rb);
+		
+		bool comeco = false;
+
+		for (int i = 31; i >= 0; i--) {
+
+			if(!comeco and ra[i] == 0 and rb[i] == 0) {
+				continue;
+			}
+			else {
+				comeco = true;
+				if((ra[i] | rb[i]) == 1) {
+					rc[i] = 0;
+				}
+				else {
+					rc[i] = 1;
+				}
+			}
+    	}
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;

@@ -31,7 +31,7 @@ class Id {
         bitset<dataBus> getRcValue()    {return rcValue;};
         bitset<c16> getConst16()        {return const16;};
         bitset<c24> getConst24()        {return const24;};
-        bitset<c8> getConst8()        {return const8;};
+        bitset<c8> getConst8()          {return const8;};
         Controle* getControle()         {return sinaisControle;};
         //void alter_Sinais(string opcode);
         // Metodo de depuração está no Controle.
@@ -130,6 +130,7 @@ void Id::depuracao() {
     cout << "\tRa: "        << ra.to_ulong() << endl;
     cout << "\tRb: "        << rb.to_ulong() << endl;
     cout << "\tRc: "        << rc.to_ulong() << endl;
+    cout << "\tconst8 : "    << const8 << endl;
     cout << "\tconst16: "   << const16 << endl;
     cout << "\tconst24: "   << const24 << endl << endl;
 
