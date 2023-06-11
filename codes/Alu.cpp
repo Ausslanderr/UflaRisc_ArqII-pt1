@@ -15,9 +15,10 @@ class Alu {
 		bool neg;
 		bool continuar;
         void verificaNegativo(bitset<dataBus> rc);
-		void verificaOverflow(bitset<dataBus> ra, string operacao);
+		void verificaOverflow(bitset<dataBus> ra, bitset<dataBus> rb, bitset<dataBus> result, string operacao);
 		void converteBits(int operacao);
         bitset<dataBus> calculaBits(bitset<dataBus> ra, bitset<dataBus> rb, string operacao);
+		int conversorBinInteiro(bitset<32> bin);
 
     public:
         Alu(Registradores *regs, If *ifStage, Id *idStage, Controle *controle, Memoria *memoria);
@@ -465,18 +466,32 @@ void Alu::converteBits(int operacao) {
         	this->PC[i] = PC[i];
     	}
 
+		if(Const8[7] == 1) {
+			for(int i = dataBus - 1; i > 0; i--) {
+				this->Const8[i] = 1;
+			}
+		}
 		for (int i = 0; i < 8; i++) {
         	this->Const8[i] = Const8[i];
     	}
 
+		if(Const16[7] == 1) {
+			for(int i = dataBus - 1; i > 0; i--) {
+				this->Const16[i] = 1;
+			}
+		}
     	for (int i = 0; i < 16; i++) {
         	this->Const16[i] = Const16[i];
     	}
 
+		if(Const24[7] == 1) {
+			for(int i = dataBus - 1; i > 0; i--) {
+				this->Const24[i] = 1;
+			}
+		}
 		for (int i = 0; i < 24; i++) {
         	this->Const24[i] = Const24[i];
     	}
-
 	}
 
 	else if(operacao == 2){ // Converte para 16
@@ -497,47 +512,137 @@ void Alu::converteBits(int operacao) {
 
 }
 
-bitset<dataBus> Alu::calculaBits(bitset<dataBus> ra, bitset<dataBus> rb, string operacao){
-	
-	// adicao
-	if((operacao == "adicao")){
-		
-        bitset<dataBus> sum;
-	
-		for (int i = 0; i < dataBus; i++) {
-			sum[i] = ra[i] ^ rb[i] ^ carry;  // Soma bit a bit com carry
-			carry = (ra[i] & rb[i]) | (carry & (ra[i] ^ rb[i]));  // Calcula o carry para o próximo bit
-		}
+bitset<dataBus> Alu::calculaBits(bitset<dataBus> ra, bitset<dataBus> rb, string operacao) {
 
-		verificaOverflow(ra, operacao);
+    // adicao
+    if((operacao == "adicao")){
+
+        bitset<dataBus> sum;
+
+        for (int i = 0; i < dataBus - 1; i++) {
+            sum[i] = ra[i] ^ rb[i] ^ carry;  // Soma bit a bit com carry
+            carry = (ra[i] & rb[i]) | (carry & (ra[i] ^ rb[i]));  // Calcula o carry para o próximo bit
+        }
+
+		int result = conversorBinInteiro(ra) + conversorBinInteiro(rb);
+
+        if (result < 0) {
+            for(int i = 31; i > 0; i--){
+                if(sum[i] == 0){
+                    sum[i] = 1;
+                }
+                else if(sum[i] == 1){
+                    i = 0;
+                }
+            }
+        }
+
+        verificaOverflow(ra, rb, sum, operacao);
         return sum;
     }
-		
-	// subtracao
-	if((operacao == "subtracao")){
-		bitset<dataBus> difference;
-		
-		for (int i = 0; i < dataBus; i++) {
-			difference[i] = ra[i] ^ rb[i] ^ borrow;  // Subtrai bit a bit com borrow
-			borrow = (!ra[i] & rb[i]) | ((borrow & !ra[i]) & !(ra[i] ^ rb[i]));  // Calcula o borrow para o próximo bit
-		}
 
-		verificaOverflow(ra, operacao);
+    // subtracao
+    if((operacao == "subtracao")){
+        bitset<dataBus> difference;
+
+        for (int i = 0; i < dataBus - 1; i++) {
+            difference[i] = ra[i] ^ rb[i] ^ borrow;  // Subtrai bit a bit com borrow
+            borrow = (!ra[i] & rb[i]) | ((borrow & !ra[i]) & !(ra[i] ^ rb[i]));  // Calcula o borrow para o próximo bit
+        }
+
+		int result = conversorBinInteiro(ra) - conversorBinInteiro(rb);
+
+        if (result < 0) {
+            for(int i = 31; i > 0; i--){
+                if(difference[i] == 0){
+                    difference[i] = 1;
+                }
+                else if(difference[i] == 1){
+                    i = 0;
+                }
+            }
+        }
+
+        verificaOverflow(ra, rb, difference, operacao);
         return difference;
     }
 
     return 0;
-			
 }
 
-void Alu::verificaOverflow(bitset<dataBus> ra, string operacao){
+int Alu::conversorBinInteiro(bitset<32> bin) {
+
+    int resultado = 0;
+    int potencia = 1;
+
+    // positivo
+    if(bin[31] == 0) {
+        
+        for(int i = 0; i <= 31; i++) {
+
+            if(bin[i] == 1) {
+                resultado += potencia;
+            }
+
+            potencia *= 2;
+        }
+    }
+
+    // negativo
+    else {
+
+        // invertido
+        bitset<32> invertido = ~bin;
+
+        // invertido + 1
+        bool carry;
+	    bitset<32> inc(1);
+	    bitset<32> sum;
+	
+	    for(int i = 0; i < 32; i++) {
+		
+		    sum[i] = invertido[i] ^ inc[i] ^ carry;
+		    carry = (invertido[i] & inc[i]) | (carry & (invertido[i] ^ inc[i]));
+	    }
+
+        bin = sum;
+
+        // descobre qual é o número negativo
+        for(int i = 0; i <= 31; i++) {
+
+            if(bin[i] == 1) {
+                resultado += potencia;
+            }
+
+            potencia *= 2;
+        }
+
+        resultado *= -1;
+    }
+
+    return resultado;
+}
+
+void Alu::verificaOverflow(bitset<dataBus> ra, bitset<dataBus> rb, bitset<dataBus> result, string operacao){
 
 	if(operacao == "adicao"){
-		overflow = carry;
+		if(conversorBinInteiro(ra) >= 0 and conversorBinInteiro(rb) >= 0 and conversorBinInteiro(result) < 0) {
+			overflow = true;
+		}
+
+		else if(conversorBinInteiro(ra) < 0 and conversorBinInteiro(rb) < 0 and conversorBinInteiro(result) >= 0) {
+			overflow = true;
+		}
 	}
 	
 	if(operacao == "subtracao"){
-		overflow = (borrow != ra[31]);
+		if(conversorBinInteiro(ra) >= 0 and conversorBinInteiro(rb) < 0 and conversorBinInteiro(result) < 0) {
+			overflow = true;
+		}
+
+		else if(conversorBinInteiro(ra) < 0 and conversorBinInteiro(rb) >= 0 and conversorBinInteiro(result) >= 0) {
+			overflow = true;
+		}
 	}
 
 }

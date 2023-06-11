@@ -1,3 +1,4 @@
-inc R8
-addi R9 1234
+subi R8, R0, 10
+subi R9, R0, -10
 halt
+EOF
