@@ -4,9 +4,10 @@ class Conversor {
 
     private:
         int enderecoComecoMemoriaTexto;
+        int enderecoMemoriaTexto;
         Memoria *memoria;
         void leituraArquivoEntrada();
-        bool verificarIntAddress(string str);
+        bool verificarIntAddress(string str, int &aux);
         vector<string>* separarString(string str, string delimiter);
         string retornarInstrucaoEmString(vector<string> *vect);
         string conversorIntParaBinario8(int valor);
@@ -23,6 +24,7 @@ class Conversor {
 Conversor::Conversor() {
 
     enderecoComecoMemoriaTexto = 0;
+    enderecoMemoriaTexto = enderecoComecoMemoriaTexto;
     memoria = new Memoria();
     try{
         leituraArquivoEntrada();
@@ -51,9 +53,9 @@ void Conversor::leituraArquivoEntrada() {
     if(arquivo_entrada) {
 
         string instrucaoAtual;
-        int enderecoMemoriaTexto = enderecoComecoMemoriaTexto;
         vector<string> *instrucaoAtualSeparada = NULL;
-        bool primeiro = false;
+        bool primeiro = false, ehAddress = false;
+        int aux = 0;
 
         do {
 
@@ -72,37 +74,45 @@ void Conversor::leituraArquivoEntrada() {
                 
                 continue;
             }
-            
+
             // a primeira instrucao deve ser obrigatoriamente um address
             // caso não for, a posição da memória texto começa em 0
-            if(!primeiro) {
+            if(instrucaoAtualSeparada->at(0) == "address") {
+
+                bool auxBool = verificarIntAddress(instrucaoAtualSeparada->at(1), aux);
+
+                if(!auxBool) {
+                    throw(2);
+                }
+
+                ehAddress = true;
+            }
+            
+            if(instrucaoAtualSeparada->at(0) != "EOF") {
+
+                instrucaoAtual = retornarInstrucaoEmString(instrucaoAtualSeparada);
+                delete instrucaoAtualSeparada;
+
+                // registro da instrucao na memoria
+                memoria->armazenarInstrucao(instrucaoAtual, enderecoMemoriaTexto);
+                enderecoMemoriaTexto++;
+
+                if(ehAddress) {
+
+                    enderecoMemoriaTexto = aux;
+
+                    if(!primeiro) {
+                    
+                        enderecoComecoMemoriaTexto = enderecoMemoriaTexto;
+                    }
+
+                    ehAddress = false;
+                }
 
                 primeiro = true;
-
-                if(instrucaoAtualSeparada->at(0) == "address") {
-
-                    bool aux = verificarIntAddress(instrucaoAtualSeparada->at(1));
-
-                    if(!aux) {
-                        throw(2);
-                    }
-                }
-
-                else {
-                    enderecoComecoMemoriaTexto = 0;
-                }
-
-                enderecoMemoriaTexto = enderecoComecoMemoriaTexto;
             }
 
-            instrucaoAtual = retornarInstrucaoEmString(instrucaoAtualSeparada);
-            delete instrucaoAtualSeparada;
-
-            // registro da instrucao na memoria
-            memoria->armazenarInstrucao(instrucaoAtual, enderecoMemoriaTexto);
-            enderecoMemoriaTexto++;
-
-        } while(instrucaoAtual != "11111111111111111111111111111111");
+        } while(instrucaoAtual != "EOF");
 
         arquivo_entrada.close();
     }
@@ -113,9 +123,9 @@ void Conversor::leituraArquivoEntrada() {
     }
 }
 
-bool Conversor::verificarIntAddress(string str) {
+bool Conversor::verificarIntAddress(string str, int &aux) {
 
-    int aux = stoi(str);
+    aux = stoi(str);
     
     if(aux >= limiteTamanhoMemoriaTexto or aux < 0) {
         
@@ -123,8 +133,6 @@ bool Conversor::verificarIntAddress(string str) {
     }
     
     else {
-        
-        enderecoComecoMemoriaTexto = aux;
         
         return true;
     }
@@ -205,7 +213,7 @@ string Conversor::retornarInstrucaoEmString(vector<string> *vect) {
     else if(vect->at(0) == "lsr")       { return (conversorIntParaBinario8(11) + conversorIntParaBinario8(stoi(vect->at(2))) + conversorIntParaBinario8(stoi(vect->at(3))) + conversorIntParaBinario8(stoi(vect->at(1))));}
     else if(vect->at(0) == "passa")     { return (conversorIntParaBinario8(12) + conversorIntParaBinario8(stoi(vect->at(2))) + conversorIntParaBinario8(0) + conversorIntParaBinario8(stoi(vect->at(1))));}
     else if(vect->at(0) == "lch")       { return (conversorIntParaBinario8(13) + conversorIntParaBinario16(stoi(vect->at(2))) + conversorIntParaBinario8(stoi(vect->at(1))));}
-    else if(vect->at(0) == "lcl")       { return (conversorIntParaBinario8(14) + conversorIntParaBinario8(stoi(vect->at(2))) + conversorIntParaBinario8(stoi(vect->at(1))));}
+    else if(vect->at(0) == "lcl")       { return (conversorIntParaBinario8(14) + conversorIntParaBinario16(stoi(vect->at(2))) + conversorIntParaBinario8(stoi(vect->at(1))));}
     else if(vect->at(0) == "load")      { return (conversorIntParaBinario8(15) + conversorIntParaBinario8(stoi(vect->at(2))) + conversorIntParaBinario8(0) + conversorIntParaBinario8(stoi(vect->at(1))));}
     else if(vect->at(0) == "store")     { return (conversorIntParaBinario8(16) + conversorIntParaBinario8(stoi(vect->at(2))) + conversorIntParaBinario8(0) + conversorIntParaBinario8(stoi(vect->at(1))));}
     else if(vect->at(0) == "jal")       { return (conversorIntParaBinario8(17) + conversorIntParaBinario24(stoi(vect->at(1))));}
@@ -217,12 +225,12 @@ string Conversor::retornarInstrucaoEmString(vector<string> *vect) {
 
     // Instrucoes do grupo (9)
     else if(vect->at(0) == "slt")       { return (conversorIntParaBinario8(22) + conversorIntParaBinario8(stoi(vect->at(2))) + conversorIntParaBinario8(stoi(vect->at(3))) + conversorIntParaBinario8(stoi(vect->at(1))));} // slt rc, ra, rb
-    else if(vect->at(0) == "slti")      { return (conversorIntParaBinario8(23) + conversorIntParaBinario8(stoi(vect->at(2))) + conversorIntParaBinario8(stoi(vect->at(1))) + conversorIntParaBinario8(stoi(vect->at(3))));} // slti rc, ra, imm
+    else if(vect->at(0) == "slti")      { return (conversorIntParaBinario8(23) + conversorIntParaBinario8(stoi(vect->at(1))) + conversorIntParaBinario8(stoi(vect->at(2))) + conversorIntParaBinario8(stoi(vect->at(3))));} // slti ra, rb, imm
     else if(vect->at(0) == "smt")       { return (conversorIntParaBinario8(24) + conversorIntParaBinario8(stoi(vect->at(2))) + conversorIntParaBinario8(stoi(vect->at(3))) + conversorIntParaBinario8(stoi(vect->at(1))));} // smt rc, ra, rb
     else if(vect->at(0) == "inc")       { return (conversorIntParaBinario8(25) + conversorIntParaBinario8(0) + conversorIntParaBinario8(0) + conversorIntParaBinario8(stoi(vect->at(1))));} // inc rc
     else if(vect->at(0) == "dec")       { return (conversorIntParaBinario8(26) + conversorIntParaBinario8(0) + conversorIntParaBinario8(0) + conversorIntParaBinario8(stoi(vect->at(1))));} // dec rc
-    else if(vect->at(0) == "addi")      { return (conversorIntParaBinario8(27) + conversorIntParaBinario16(stoi(vect->at(2))) + conversorIntParaBinario8(stoi(vect->at(1))));}  // addi rc, imm
-    else if(vect->at(0) == "subi")      { return (conversorIntParaBinario8(28) + conversorIntParaBinario8(stoi(vect->at(2))) + conversorIntParaBinario8(stoi(vect->at(1))));}   // subi rc, imm
+    else if(vect->at(0) == "addi")      { return (conversorIntParaBinario8(27) + conversorIntParaBinario8(stoi(vect->at(1))) + conversorIntParaBinario8(stoi(vect->at(2))) + conversorIntParaBinario8(stoi(vect->at(3))));} // addi ra, rb, imm
+    else if(vect->at(0) == "subi")      { return (conversorIntParaBinario8(28) + conversorIntParaBinario8(stoi(vect->at(1))) + conversorIntParaBinario8(stoi(vect->at(2))) + conversorIntParaBinario8(stoi(vect->at(3))));} // subi ra, rb, imm
     else if(vect->at(0) == "nand")      { return (conversorIntParaBinario8(29) + conversorIntParaBinario8(stoi(vect->at(2))) + conversorIntParaBinario8(stoi(vect->at(3))) + conversorIntParaBinario8(stoi(vect->at(1))));} // nand rc, ra, rb
     else if(vect->at(0) == "nor")       { return (conversorIntParaBinario8(30) + conversorIntParaBinario8(stoi(vect->at(2))) + conversorIntParaBinario8(stoi(vect->at(3))) + conversorIntParaBinario8(stoi(vect->at(1))));} // nor rc, ra, rb
 

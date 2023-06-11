@@ -104,7 +104,7 @@ void Processador::executar() {
             incrementarClock();
 
             // estágio wb
-            wbStage = new Wb(regs, idStage, idStage->getControle(), exMemStage->getAlu());
+            wbStage = new Wb(regs, idStage, idStage->getControle(), exMemStage->getAlu(), memoria);
             incrementarClock();
 
             delete idStage;

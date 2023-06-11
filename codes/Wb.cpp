@@ -5,19 +5,21 @@ class Wb{
 		Id *idStage;
 		Controle *controle;
         Alu *alu;
+		Memoria *memoria;
 		void leituraEscritaRegistrador();
 		
 	public:
-		Wb(Registradores *regs, Id *idStage, Controle *controle, Alu *alu);
+		Wb(Registradores *regs, Id *idStage, Controle *controle, Alu *alu, Memoria *memoria);
 		~Wb();
 };
 
-Wb::Wb(Registradores *regs, Id *idStage, Controle *controle, Alu *alu){
+Wb::Wb(Registradores *regs, Id *idStage, Controle *controle, Alu *alu, Memoria *memoria){
 	
 	this->regs = regs;
 	this->idStage = idStage;
 	this->controle = controle;
 	this->alu = alu;
+	this->memoria = memoria;
 
 	leituraEscritaRegistrador();
 }
@@ -40,17 +42,24 @@ void Wb::leituraEscritaRegistrador(){
 	// lw
 	else if(controle->getRegwrite() == 1 and controle->getMemtoReg() == 1){
 
-		bitset<dataBus> novoDado(alu->getResultadoRc());
+		bitset<dataBus> novoDado = memoria->getDado(alu->getResultadoRa());
 
-		regs->setRegistrador(novoDado, idStage->getRa());
+		regs->setRegistrador(novoDado, idStage->getRc());
 	}
 	
-	// R
+	// addi e subi
 	else if(controle->getRegwrite() == 1 and controle->getRegdst() == 1 and alu->getOverflow() == 0){
+				
+		bitset<dataBus> novoDado(alu->getResultadoRc());
+		
+		regs->setRegistrador(novoDado, idStage->getRa());
+	}
+
+	// R
+	else if(controle->getRegwrite() == 1 and controle->getRegdst() == 0 and alu->getOverflow() == 0){
 				
 		bitset<dataBus> novoDado(alu->getResultadoRc());
 		
 		regs->setRegistrador(novoDado, idStage->getRc());
 	}
-	
 }

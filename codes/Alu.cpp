@@ -8,7 +8,6 @@ class Alu {
 		Id *idStage;
 		Controle *controle;
 		Memoria *memoria;
-		int rbInt; // Apenas usado para trabalhar com o bitset em função especifica ">> e <<", que exige um inteiro.
         bool ALUzero;
 		bool overflow;
 		bool carry;
@@ -140,7 +139,7 @@ void Alu::instrucoesAritmeticas(){
 	// SHIFT ARITMÉTICO PARA A ESQUERDA
 	if(controle->getAluctrl() == "asl"){
 		aux = ra[31]; 
-		rc = ra << rbInt;
+		rc = ra << rb.to_ulong();
 		rc[31] = aux;
 		// nao causa overflow
 		verificaNegativo(rc);
@@ -152,7 +151,7 @@ void Alu::instrucoesAritmeticas(){
 	// SHIFT ARITMÉTICO PARA A DIREITA
 	if(controle->getAluctrl() == "asr"){
 		aux = ra[31]; 
-		rc = ra >> rbInt;
+		rc = ra >> rb.to_ulong();
 		rc[31] = aux;
 		// nao causa overflow
 		verificaNegativo(rc);
@@ -163,7 +162,7 @@ void Alu::instrucoesAritmeticas(){
 
 	// SHIFT LÓGICO PARA A ESQUERDA
 	if(controle->getAluctrl() == "lsl"){
-		rc = ra << rbInt;
+		rc = ra << rb.to_ulong();
 		rc[31] = aux;
 		// nao causa overflow
 		verificaNegativo(rc);
@@ -174,7 +173,7 @@ void Alu::instrucoesAritmeticas(){
 	
 	// SHIFT LÓGICO PARA A DIREITA
 	if(controle->getAluctrl() == "lsr"){
-		rc = ra >> rbInt;
+		rc = ra >> rb.to_ulong();
 		rc[31] = aux;
 		// nao causa overflow
 		verificaNegativo(rc);
@@ -298,7 +297,7 @@ void Alu::instrucoesAritmeticas(){
 
 	// Addi
 	if(controle->getAluctrl() == "addi"){
-		rc = calculaBits(ra, Const8, "adicao");
+		rc = calculaBits(rb, Const8, "adicao");
 		verificaNegativo(rc);
 		zero = rc;
 		
@@ -307,7 +306,7 @@ void Alu::instrucoesAritmeticas(){
 
 	// Subi
 	if(controle->getAluctrl() == "subi"){
-		rc = calculaBits(ra, Const8, "subtracao");
+		rc = calculaBits(rb, Const8, "subtracao");
 		verificaNegativo(rc);
 		zero = rc;
 		
@@ -351,8 +350,8 @@ void Alu::instrucoesDeDesvio(){
 
 	// JUMP AND LINK
 	if(controle->getAluctrl() == "jal"){
-		r31 = PC; 
-		PC = Const24;	
+		r31 = PC;
+		PC = Const24;
 		cout << "Eh uma instrucao de jal" << endl << endl;
 	}
 	
@@ -380,9 +379,9 @@ void Alu::instrucoesDeDesvio(){
 	}
 	
 	//  JUMP INCONDICIONAL e ADRESS
-	if(controle->getAluctrl() == "j" || controle->getAluctrl() == "adress"){
+	if(controle->getAluctrl() == "j"){
 		PC = Const24;
-		cout << "Eh uma instrucao de j ou adress" << endl << endl;
+		cout << "Eh uma instrucao de j" << endl << endl;
 	}
 	
 	// Alterar o PC e o r31 já que eles foram modificados.
@@ -409,11 +408,10 @@ void Alu::instrucoesDeMemoria(){
 			converteBits(3);
 
 			memoria->armazenarDado(ra, novoRc);
+
+			cout << "Eh uma instrucao de store" << endl << endl;
 			
 		}
-	}
-		//tenho que setar na memoria o rc = ra;
-		cout << "Eh uma instrucao de store" << endl << endl;
 	}
 }
 
@@ -442,17 +440,6 @@ void Alu::converteBits(int operacao) {
 		for (int i = 0; i < 24; i++) {
         	this->Const24[i] = Const24[i];
     	}
-
-		rbInt = 0;
-
-		for (int i = 0; i < 32; i++) { // Transforma rb bitset em int
-        	rbInt <<= 1; 
-        	rbInt |= rb[i];
-    	}		
-
-		if (rc[31]) { // Caso o valor do bitset seja negativo, o inteiro dele também deve ser negativo. Faz o mesmo que verificaNegativo(), mas não mexe na variavel neg.
-    		rbInt = -rbInt;
-		}
 
 	}
 
@@ -496,7 +483,7 @@ bitset<dataBus> Alu::calculaBits(bitset<dataBus> ra, bitset<dataBus> rb, string 
 		
 		for (int i = 0; i < dataBus; i++) {
 			difference[i] = ra[i] ^ rb[i] ^ borrow;  // Subtrai bit a bit com borrow
-			borrow = (!ra[i] & rb[i]) | (borrow & (ra[i] ^ rb[i]));  // Calcula o borrow para o próximo bit
+			borrow = (!ra[i] & rb[i]) | ((borrow & !ra[i]) & !(ra[i] ^ rb[i]));  // Calcula o borrow para o próximo bit
 		}
 
 		verificaOverflow(ra, operacao);
@@ -535,5 +522,6 @@ void Alu::mostrarFlags(){
     cout << "\tCarry: " 			<< carry << endl;
     cout << "\tNegativo: " 			<< neg << endl;
 	cout << "\tSinal de Overflow: " << overflow << endl;
-	cout << "\tCalculo do endereco de desvio (valor de resultado): " << rc << endl;
+	cout << "\tCalculo do endereco de desvio (valor de resultado): " << novoPC << endl;
+	cout << "\tValor do rc: " 		<< rc << endl;
 }
