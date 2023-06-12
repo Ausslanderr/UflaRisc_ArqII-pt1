@@ -10,7 +10,6 @@ class Wb{
 		
 	public:
 		Wb(Registradores *regs, Id *idStage, Controle *controle, Alu *alu, Memoria *memoria);
-		~Wb();
 };
 
 Wb::Wb(Registradores *regs, Id *idStage, Controle *controle, Alu *alu, Memoria *memoria){
@@ -22,11 +21,6 @@ Wb::Wb(Registradores *regs, Id *idStage, Controle *controle, Alu *alu, Memoria *
 	this->memoria = memoria;
 
 	leituraEscritaRegistrador();
-}
-
-Wb::~Wb() {
-
-	cout << "wb morreu" << endl;
 }
 
 void Wb::leituraEscritaRegistrador(){

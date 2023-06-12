@@ -1,4 +1,7 @@
+# a finalidade desse arquivo é somente mostrar a padronização das instruções
+
 # instruções do processador
+
 address 12182   # o começo da memória de texto começa na posição 12182
 add R8, R16, R17
 sub R8, R9, R10
@@ -12,7 +15,7 @@ asr R3, R16, R5
 lsl R2, R16, R6
 lsr R3, R16, R5
 passa R2, R16
-lch R8 56312
+lch R8 30000
 lcl R8 14032
 load R20, R7
 store R20, R6
@@ -22,14 +25,16 @@ beq R8, R13, 12
 bne R8, R13, 76
 j 312
 halt
+
 # instruções do grupo
+
 slt R8, R2, R8
 slti R8, R2, 122
 smt R8, R2, R0
 inc R8
 dec R8
-addi R8 123
-subi R29 4
+addi R8, R0, 123
+subi R29, R29, 4
 nand R16, R17, R18
 nor R2, R16, R17
 EOF

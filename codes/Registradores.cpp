@@ -22,8 +22,6 @@ Registradores::Registradores() {
 Registradores::~Registradores() {
 
 	delete[] vetorReg;
-
-	cout << "registrador morreu" << endl;
 }
 
 bitset<dataBus> Registradores::getRegistrador(bitset<lengthRegister> numeroRegistrador) {

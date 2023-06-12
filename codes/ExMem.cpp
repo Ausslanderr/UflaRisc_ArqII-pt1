@@ -29,8 +29,6 @@ ExMem::ExMem(Registradores *regs, If *ifStage, Id *idStage, Controle *controle, 
 ExMem::~ExMem() {
 
 	delete alu;
-
-	cout << "ExMem morreu" << endl;
 }
 
 void ExMem::realizarOperacoes(){

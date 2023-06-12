@@ -106,8 +106,6 @@ Processador::~Processador() {
 
     delete conversor;
     delete regs;
-
-    cout << "processador morreu" << endl;
 }
 
 void Processador::executar() {

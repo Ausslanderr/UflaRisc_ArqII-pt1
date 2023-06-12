@@ -37,8 +37,6 @@ Conversor::Conversor() {
 Conversor::~Conversor() {
 
     delete memoria;
-
-    cout << "conversor morreu" << endl;
 }
 
 void Conversor::leituraArquivoEntrada() {

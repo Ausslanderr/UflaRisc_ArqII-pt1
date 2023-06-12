@@ -8,7 +8,6 @@ class If {
 
     public:
         If(Memoria *memoria, bitset<addressBus> PC);
-        ~If();
         bitset<dataBus> getInstrucao();
         bitset<addressBus> getPc();
         void desviaPc(bitset<addressBus> PC);
@@ -18,11 +17,6 @@ If::If(Memoria *memoria, bitset<addressBus> PC) {
 
     this->memoria = memoria;
     this->PC = PC;
-}
-
-If::~If() {
-
-    cout << "If morreu" << endl;
 }
 
 bitset<dataBus> If::getInstrucao() {

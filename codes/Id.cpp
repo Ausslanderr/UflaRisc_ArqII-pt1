@@ -46,8 +46,6 @@ Id::Id(bitset<dataBus> instrucaoBinaria, Registradores *regs) {
 Id::~Id(){
 
     delete sinaisControle;
-
-    cout << "Id morreu" << endl;
 }
 
 void Id::reset_valores() {

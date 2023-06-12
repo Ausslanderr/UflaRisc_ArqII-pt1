@@ -21,7 +21,6 @@ class Alu {
 
     public:
         Alu(Registradores *regs, If *ifStage, Id *idStage, Controle *controle, Memoria *memoria);
-		~Alu();
         void instrucoesAritmeticas();
         void instrucoesDeDesvio();
         void instrucoesDeMemoria();
@@ -57,11 +56,6 @@ Alu::Alu(Registradores *regs, If *ifStage, Id *idStage, Controle *controle, Memo
 	neg = 0;
 	num = (65535);
 	continuar = true;
-}
-
-Alu::~Alu() {
-
-	cout << "alu morreu" << endl;
 }
 
 void Alu::instrucoesAritmeticas() {

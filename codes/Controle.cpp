@@ -16,7 +16,6 @@ class Controle {
 
     public:
         Controle(string opcode);
-        ~Controle();
         bool getRegdst()    {return Regdst;};
         bool getRegwrite()  {return Regwrite;};
         string getAluctrl() {return Aluctrl;};
@@ -34,11 +33,6 @@ Controle::Controle(string opcode) {
 
     valuesReset();
     alterarSinais(opcode);
-}
-
-Controle::~Controle() {
-
-    cout << "controle morreu" << endl;
 }
 
 void Controle:: valuesReset() {
