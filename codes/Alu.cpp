@@ -54,7 +54,7 @@ Alu::Alu(Registradores *regs, If *ifStage, Id *idStage, Controle *controle, Memo
 	carry = 0;
     borrow = 0;
 	neg = 0;
-	num = (65535);
+	num = 65535;
 	continuar = true;
 }
 
@@ -67,8 +67,6 @@ void Alu::instrucoesAritmeticas() {
 		rc = calculaBits(ra, rb, "adicao");
 		verificaNegativo(rc);
 		zero = rc;
-		
-		cout << "Eh uma instrucao de add" << endl << endl;
 	}
 	
 	// SUBTRAÇÃO INTEIRA
@@ -76,8 +74,6 @@ void Alu::instrucoesAritmeticas() {
 		rc = calculaBits(ra, rb, "subtracao");
 		verificaNegativo(rc);
 		zero = rc;
-		
-		cout << "Eh uma instrucao de sub" << endl << endl;
 	}
 	
 	// ZERA
@@ -86,8 +82,6 @@ void Alu::instrucoesAritmeticas() {
 		// nao causa overflow
 		// neg por padrao é zero
 		zero = rc;
-		
-		cout << "Eh uma instrucao de zeros" << endl << endl;
 	}
 	
 	// XOR LÓGICO
@@ -96,8 +90,6 @@ void Alu::instrucoesAritmeticas() {
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
-
-		cout << "Eh uma instrucao de xor" << endl << endl;
 	}
 	
 	// OR LÓGICO
@@ -106,8 +98,6 @@ void Alu::instrucoesAritmeticas() {
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
-		
-		cout << "Eh uma instrucao de or" << endl << endl;
 	}
 	
 	// NOT
@@ -116,8 +106,6 @@ void Alu::instrucoesAritmeticas() {
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
-		
-		cout << "Eh uma instrucao de passnota" << endl << endl;
 	}
 	
 	// AND LÓGICO
@@ -126,8 +114,6 @@ void Alu::instrucoesAritmeticas() {
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
-		
-		cout << "Eh uma instrucao de and" << endl << endl;
 	}
 	
 	// SHIFT ARITMÉTICO PARA A ESQUERDA
@@ -138,8 +124,6 @@ void Alu::instrucoesAritmeticas() {
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
-		
-		cout << "Eh uma instrucao de asl" << endl << endl;
 	}
 	
 	// SHIFT ARITMÉTICO PARA A DIREITA
@@ -150,8 +134,6 @@ void Alu::instrucoesAritmeticas() {
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
-		
-		cout << "Eh uma instrucao de asr" << endl << endl;
 	}
 
 	// SHIFT LÓGICO PARA A ESQUERDA
@@ -161,8 +143,6 @@ void Alu::instrucoesAritmeticas() {
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
-		
-		cout << "Eh uma instrucao de lsl" << endl << endl;
 	}
 	
 	// SHIFT LÓGICO PARA A DIREITA
@@ -172,8 +152,6 @@ void Alu::instrucoesAritmeticas() {
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
-		
-		cout << "Eh uma instrucao de lsr" << endl << endl;
 	}
 	
 	// COPIA
@@ -182,28 +160,52 @@ void Alu::instrucoesAritmeticas() {
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
-		
-		cout << "Eh uma instrucao de passa" << endl << endl;
 	}
 	
 	// CARREGA CONSTANTE NOS 2 BYTES MAIS SIGNIFICATIVOS
 	else if(controle->getAluctrl() == "lch") {
-		rc = (Const16 << 16) | (rc & num);
+		for (int i = 15; i >= 0; i--) {
+
+			if((rc[i] & num[i]) == 0) {
+				rc[i] = 0;
+			}
+			else {
+				rc[i] = 1;
+			}
+    	}
+
+		bitset<dataBus> aux = (Const16 << 16);
+		for (int i = 31; i >= 16; i--) {
+
+			rc[i] = aux[i];
+    	}
+
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
-		
-		cout << "Eh uma instrucao de lch" << endl << endl;
 	}
 	
 	// CARREGA CONSTANTE NOS 2 BYTES MENOS SIGNIFICATIVOS
 	else if(controle->getAluctrl() == "lcl") {
-		rc = Const16 | (rc & num);
+		bitset<dataBus> aux = num << 16;
+		for (int i = 31; i >= 16; i--) {
+
+			if((rc[i] & aux[i]) == 0) {
+				rc[i] = 0;
+			}
+			else {
+				rc[i] = 1;
+			}
+    	}
+
+		for (int i = 15; i >= 0; i--) {
+
+			rc[i] = Const16[i];
+    	}
+
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
-		
-		cout << "Eh uma instrucao de lcl" << endl << endl;
 	}
 
 	// Slt
@@ -225,8 +227,6 @@ void Alu::instrucoesAritmeticas() {
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
-		
-		cout << "Eh uma instrucao de slt" << endl << endl;
 	}
 
 	// Slti
@@ -248,8 +248,6 @@ void Alu::instrucoesAritmeticas() {
     	// não causa overflow
     	verificaNegativo(rc);
     	zero = rc;
-
-    	cout << "Eh uma instrucao de slti" << endl << endl;
 	}
 
 	// Smt
@@ -267,8 +265,6 @@ void Alu::instrucoesAritmeticas() {
 				break;
         	}
     	}
-
-    	cout << "Eh uma instrucao de smt" << endl << endl;
 	}
 
 	// Inc
@@ -277,8 +273,6 @@ void Alu::instrucoesAritmeticas() {
  		rc = calculaBits(rc, 1, "adicao");
     	verificaNegativo(rc);
     	zero = rc;
-
-    	cout << "Eh uma instrucao de inc" << endl << endl;
 	}
 
 	// Dec
@@ -287,8 +281,6 @@ void Alu::instrucoesAritmeticas() {
  		rc = calculaBits(rc, 1, "subtracao");
     	verificaNegativo(rc);
     	zero = rc;
-
-    	cout << "Eh uma instrucao de dec" << endl << endl;
 	}
 
 	// Addi
@@ -296,8 +288,6 @@ void Alu::instrucoesAritmeticas() {
 		rc = calculaBits(rb, Const8, "adicao");
 		verificaNegativo(rc);
 		zero = rc;
-		
-		cout << "Eh uma instrucao de addi" << endl << endl;
 	}
 
 	// Subi
@@ -305,8 +295,6 @@ void Alu::instrucoesAritmeticas() {
 		rc = calculaBits(rb, Const8, "subtracao");
 		verificaNegativo(rc);
 		zero = rc;
-		
-		cout << "Eh uma instrucao de subi" << endl << endl;
 	}
 
 	// Nand
@@ -332,8 +320,6 @@ void Alu::instrucoesAritmeticas() {
     	// não causa overflow
     	verificaNegativo(rc);
     	zero = rc;
-
-    	cout << "Eh uma instrucao de nand" << endl << endl;
 	}
 
 	// Nor
@@ -359,15 +345,11 @@ void Alu::instrucoesAritmeticas() {
 		// nao causa overflow
 		verificaNegativo(rc);
 		zero = rc;
-		
-		cout << "Eh uma instrucao de nor" << endl << endl;
 	}
 
 	// halt
 	else if(controle->getAluctrl() == "halt - saída de sistema") {
 		continuar = false;
-
-		cout << "Eh uma instrucao de halt" << endl << endl;
 	}
 	
 	// Verifica se algum resultado corresponde a 0 para acionar a flag
@@ -382,21 +364,17 @@ void Alu::instrucoesDeDesvio() {
 	if(controle->getAluctrl() == "jal") {
 		r31 = PC;
 		PC = Const24;
-		cout << "Eh uma instrucao de jal" << endl << endl;
 	}
 	
 	// JUMP REGISTER
 	else if(controle->getAluctrl() == "jr") {
-		PC = r31;	
-		cout << "Eh uma instrucao de jr" << endl << endl;
+		PC = r31;
 	}
 	
 	//  JUMP SE IGUAL (BEQ)
 	else if(controle->getAluctrl() == "beq") {
 		if(ra == rb)
 			PC = Const8;
-
-		cout << "Eh uma instrucao de beq" << endl << endl;
 	}
 	
 	//  JUMP SE DIFERENTE (BNE)
@@ -404,14 +382,11 @@ void Alu::instrucoesDeDesvio() {
 		if(ra != rb){
 			PC = Const8;
 		}
-
-		cout << "Eh uma instrucao de bne" << endl << endl;
 	}
 	
 	//  JUMP INCONDICIONAL
 	else if(controle->getAluctrl() == "j") {
 		PC = Const24;
-		cout << "Eh uma instrucao de j" << endl << endl;
 	}
 	
 	// Altera o PC e o r31 já que eles foram modificados.
@@ -425,7 +400,6 @@ void Alu::instrucoesDeMemoria() {
 	// LOAD WORD (vou refazer)
 	if(controle->getAluctrl() == "load"){
 		//rc = tenho que setar na memoria o ra;
-		cout << "Eh uma instrucao de load" << endl << endl;
 	}
 	
 	// STORE WORD (vou refazer)
@@ -436,9 +410,6 @@ void Alu::instrucoesDeMemoria() {
 			converteBits(3);
 
 			memoria->armazenarDado(ra, novoRc);
-
-			cout << "Eh uma instrucao de store" << endl << endl;
-			
 		}
 	}
 }
